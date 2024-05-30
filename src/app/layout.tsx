@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const font = Poppins({
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-poppins",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +20,7 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en" className="light">
-      <body className={inter.className}>
+      <body className={font.className}>
         <Providers>{children}</Providers>
       </body>
     </html>
