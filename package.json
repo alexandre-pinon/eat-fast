@@ -6,10 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "dotenv -e .env.local -- drizzle-kit generate",
+    "drop": "drizzle-kit drop",
+    "push": "dotenv -e .env.local -- drizzle-kit push",
+    "migrate": "dotenv -e .env.local -- drizzle-kit migrate",
+    "studio": "dotenv -e .env.local -- drizzle-kit studio"
   },
   "dependencies": {
-    "@nextui-org/react": "2.4.0",
+    "@auth/drizzle-adapter": "1.1.0",
+    "@neondatabase/serverless": "0.9.3",
+    "@nextui-org/react": "2.4.1",
+    "dotenv-cli": "7.4.2",
+    "drizzle-orm": "0.30.10",
     "framer-motion": "11.2.9",
     "next": "14.2.3",
     "next-auth": "5.0.0-beta.18",
@@ -18,9 +27,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.7.3",
-    "@types/node": "20.12.12",
+    "@types/node": "20.12.13",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
+    "drizzle-kit": "0.21.4",
     "postcss": "8.4.38",
     "tailwindcss": "3.4.3",
     "typescript": "5.4.5"
