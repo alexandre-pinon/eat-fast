@@ -1,12 +1,10 @@
-import { Button } from "@nextui-org/react";
+import { SignIn } from "@/components/sign-in";
 
 export default function Home() {
   return (
     <main className="">
       <h1 className="text-4xl font-semibold">EatFast</h1>
-      <Button variant="flat" color="primary">
-        Click me
-      </Button>
+      <SignIn />
     </main>
   );
 }
