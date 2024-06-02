@@ -7,7 +7,6 @@ import {
   CardHeader,
   Divider,
   Input,
-  Link,
   Spacer,
 } from "@nextui-org/react";
 import type { ReactNode } from "react";
@@ -19,14 +18,7 @@ export default function SignInPage() {
     <main className="grid place-items-center min-h-screen">
       <Card className="w-full max-w-xl p-4">
         <CardHeader className="justify-center">
-          <Link
-            color="foreground"
-            className="flex items-center gap-x-2"
-            href="/"
-          >
-            <Logo size={40} />
-            <p className="font-semibold text-lg">EatFast</p>
-          </Link>
+          <Logo size={40} />
         </CardHeader>
         <Spacer y={12} />
         <CardBody>
@@ -51,7 +43,7 @@ const ProviderSignIn = ({
     <form
       action={async () => {
         "use server";
-        await signIn(provider.id);
+        await signIn(provider.id, { redirectTo: "/meals-of-the-week" });
       }}
     >
       {provider.id === "resend" ? (

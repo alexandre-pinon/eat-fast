@@ -12,10 +12,7 @@ export const NavBar = () => {
   return (
     <Navbar>
       <NavbarBrand className="">
-        <Link color="foreground" className="flex items-center gap-x-2" href="/">
-          <Logo size={40} />
-          <p className="font-semibold text-lg">EatFast</p>
-        </Link>
+        <Logo size={40} />
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
