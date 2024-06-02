@@ -1,30 +1,18 @@
 import { signIn } from "@/auth";
-import { Button, type ButtonVariantProps, Input } from "@nextui-org/react";
-import type { BuiltInProviderType } from "next-auth/providers";
+import { Button, type ButtonVariantProps } from "@nextui-org/react";
 
-type SignInButtonProps = ButtonVariantProps & {
-  provider: BuiltInProviderType;
-};
+type SignInButtonProps = ButtonVariantProps;
 
-export const SignIn = ({
-  provider,
-  ...buttonVariantProps
-}: SignInButtonProps) => {
+export const SignIn = ({ ...buttonVariantProps }: SignInButtonProps) => {
   return (
     <form
-      action={async (formData) => {
+      action={async () => {
         "use server";
-        console.log("formData", formData.values());
-        await signIn(provider, formData);
+        await signIn();
       }}
     >
-      {provider === "resend" ? (
-        <Input type="text" name="email" placeholder="Email" />
-      ) : (
-        <></>
-      )}
       <Button type="submit" {...buttonVariantProps}>
-        Signin with {provider.charAt(0).toUpperCase() + provider.slice(1)}
+        Sign in
       </Button>
     </form>
   );

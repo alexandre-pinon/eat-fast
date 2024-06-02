@@ -37,6 +37,7 @@ const config: Config = {
         light: {
           colors: {
             primary: {
+              "50": "#FDE2DC",
               "100": "#FDD5D1",
               "200": "#FBA4A3",
               "300": "#F3747F",
@@ -49,6 +50,7 @@ const config: Config = {
               DEFAULT: "#DA1C52",
             },
             success: {
+              "50": "#EDFCE0",
               "100": "#E4FBD6",
               "200": "#C4F8AE",
               "300": "#98EA81",
@@ -61,6 +63,7 @@ const config: Config = {
               DEFAULT: "#37BA30",
             },
             secondary: {
+              "50": "#D7FDF5",
               "100": "#CAFCF6",
               "200": "#96FAF6",
               "300": "#60ECF1",
@@ -73,6 +76,7 @@ const config: Config = {
               DEFAULT: "#00ACD3",
             },
             warning: {
+              "50": "#FEFBD8",
               "100": "#FEF9CC",
               "200": "#FEF399",
               "300": "#FEE966",
@@ -85,6 +89,7 @@ const config: Config = {
               DEFAULT: "#FCD202",
             },
             danger: {
+              "50": "#FEEBDF",
               "100": "#FEE1D5",
               "200": "#FEBDAC",
               "300": "#FC9083",

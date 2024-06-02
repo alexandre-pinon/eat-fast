@@ -1,13 +1,21 @@
-import { SignIn } from "@/components/sign-in";
+import { NavBar } from "@/components/navbar";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="">
-      <h1 className="text-4xl font-semibold">EatFast</h1>
-      <div className="flex gap-x-2">
-        <SignIn variant="flat" color="primary" provider="google" />
-        <SignIn variant="ghost" color="primary" provider="resend" />
-      </div>
-    </main>
+    <>
+      <header>
+        <NavBar />
+      </header>
+      <main className="container mx-auto mt-24">
+        <div className="max-w-lg space-y-10">
+          <h1 className="text-4xl font-semibold leading-none">
+            Meal planning made easy
+          </h1>
+          <p className="text-lg font-medium">
+            Simplify your weekly meals with just a few taps
+          </p>
+        </div>
+      </main>
+    </>
   );
 }
