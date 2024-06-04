@@ -41,9 +41,10 @@ const ProviderSignIn = ({
 
   return (
     <form
-      action={async () => {
+      action={async (formData) => {
         "use server";
-        await signIn(provider.id, { redirectTo: "/meals-of-the-week" });
+        formData.set("redirectTo", "/meals-of-the-week");
+        await signIn(provider.id, formData);
       }}
     >
       {provider.id === "resend" ? (

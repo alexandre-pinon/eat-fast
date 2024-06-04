@@ -9,7 +9,7 @@ export default function DashboardLayout({
       <aside>
         <SideNav />
       </aside>
-      <main className="bg-white">{children}</main>
+      <main className="bg-white px-10 pt-12">{children}</main>
     </div>
   );
 }
