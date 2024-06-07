@@ -1,101 +1,83 @@
-import {
-  DayOfTheWeekCard,
-  type DayOfTheWeekCardProps,
-} from "@/components/day-of-the-week-card";
-import type { WithId } from "@/types";
+import { randomUUID } from "node:crypto";
+import { MealsOfTheWeek } from "@/components/meals-of-the-week";
+import type { Meal, WeekDay } from "@/types";
 import { ScrollShadow, Spacer } from "@nextui-org/react";
 
-const data = [
-  {
-    id: "0000",
-    day: "monday",
-    meals: [
-      {
-        type: "breakfast",
-        title: "Eggs & bacon",
-        time: 10,
-      },
-      {
-        type: "diner",
-        title: "Fish soup",
-        time: 30,
-      },
-    ],
-  },
-  {
-    id: "0001",
-    day: "tuesday",
-    meals: [
-      {
-        type: "lunch",
-        title: "Steak with fries",
-        time: 15,
-      },
-      {
-        type: "diner",
-        title: "Pasta salad",
-        time: 10,
-      },
-    ],
-  },
-  {
-    id: "0002",
-    day: "wednesday",
-    meals: [
-      {
-        type: "breakfast",
-        title: "Cereals",
-        time: 0,
-      },
-      {
-        type: "lunch",
-        title: "Mustard chicken with rice",
-        time: 45,
-      },
-      {
-        type: "diner",
-        title: "Chorizo and mushroom risotto",
-        time: 40,
-      },
-    ],
-  },
-  {
-    id: "0003",
-    day: "thursday",
-    meals: [
-      {
-        type: "breakfast",
-        title: "Croissant",
-        time: 0,
-      },
-      {
-        type: "lunch",
-        title: "Carbonara pasta",
-        time: 25,
-      },
-      {
-        type: "diner",
-        title: "Homemade pizza",
-        time: 30,
-      },
-    ],
-  },
-  {
-    id: "0004",
-    day: "friday",
-    meals: [],
-  },
-  {
-    id: "0005",
-    day: "saturday",
-    meals: [],
-  },
-  {
-    id: "0006",
-    day: "sunday",
-    meals: [],
-  },
-] satisfies WithId<DayOfTheWeekCardProps>[];
+const data = {
+  monday: [
+    {
+      id: randomUUID(),
+      type: "breakfast",
+      title: "Eggs & bacon",
+      time: 10,
+    },
+    { id: randomUUID() },
+    {
+      id: randomUUID(),
+      type: "diner",
+      title: "Fish soup",
+      time: 30,
+    },
+  ],
+  tuesday: [
+    { id: randomUUID() },
+    {
+      id: randomUUID(),
+      type: "lunch",
+      title: "Steak with fries",
+      time: 15,
+    },
+    {
+      id: randomUUID(),
+      type: "diner",
+      title: "Pasta salad",
+      time: 10,
+    },
+  ],
+  wednesday: [
+    {
+      id: randomUUID(),
+      type: "breakfast",
+      title: "Cereals",
+      time: 0,
+    },
+    {
+      id: randomUUID(),
+      type: "lunch",
+      title: "Mustard chicken with rice",
+      time: 45,
+    },
+    {
+      id: randomUUID(),
+      type: "diner",
+      title: "Chorizo and mushroom risotto",
+      time: 40,
+    },
+  ],
+  thursday: [
+    {
+      id: randomUUID(),
+      type: "breakfast",
+      title: "Croissant",
+      time: 0,
+    },
+    {
+      id: randomUUID(),
+      type: "lunch",
+      title: "Carbonara pasta",
+      time: 25,
+    },
+    {
+      id: randomUUID(),
+      type: "diner",
+      title: "Homemade pizza",
+      time: 30,
+    },
+  ],
+  friday: [{ id: randomUUID() }, { id: randomUUID() }, { id: randomUUID() }],
+  saturday: [{ id: randomUUID() }, { id: randomUUID() }, { id: randomUUID() }],
+  sunday: [{ id: randomUUID() }, { id: randomUUID() }, { id: randomUUID() }],
+} satisfies Record<WeekDay, (Meal | { id: string })[]>;
 
 export default function MealsOfTheWeekPage() {
   return (
@@ -106,9 +88,7 @@ export default function MealsOfTheWeekPage() {
         hideScrollBar
         className="flex gap-x-4 flex-nowrap overflow-x-scroll"
       >
-        {data.map((d) => (
-          <DayOfTheWeekCard key={d.id} day={d.day} meals={d.meals} />
-        ))}
+        <MealsOfTheWeek data={data} />
       </ScrollShadow>
     </div>
   );
