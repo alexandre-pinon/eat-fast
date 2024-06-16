@@ -6,11 +6,15 @@ import {
   type DragOverEvent,
   DragOverlay,
   type DragStartEvent,
+  PointerSensor,
   closestCenter,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import { arraySwap } from "@dnd-kit/sortable";
 import { useState } from "react";
 import { DayOfTheWeekCard, dispayMeal } from "./day-of-the-week-card";
+import { MealModal } from "./modal/meal-modal";
 
 type LastSwap = {
   lastActiveWeekDay: WeekDay;
@@ -25,6 +29,13 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
   const [mealsOfTheWeek, setMealsOfTheWeek] = useState(data);
   const [activeMeal, setActiveMeal] = useState<Nullable<OrId<Meal>>>(null);
   const [lastSwap, setLastSwap] = useState<Nullable<LastSwap>>(null);
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+  );
 
   const handleDragStart = (event: DragStartEvent) => {
     const activeMeal = Object.values(mealsOfTheWeek)
@@ -173,19 +184,23 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
   };
 
   return (
-    <DndContext
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-    >
-      {Object.entries(mealsOfTheWeek).map(([day, meals]) => (
-        <DayOfTheWeekCard key={day} day={day} meals={meals} />
-      ))}
-      <DragOverlay>
-        {activeMeal ? dispayMeal(activeMeal, true) : null}
-      </DragOverlay>
-    </DndContext>
+    <>
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+        sensors={sensors}
+      >
+        {Object.entries(mealsOfTheWeek).map(([day, meals]) => (
+          <DayOfTheWeekCard key={day} day={day} meals={meals} />
+        ))}
+        <DragOverlay>
+          {activeMeal ? dispayMeal(activeMeal, { isDragOverlay: true }) : null}
+        </DragOverlay>
+      </DndContext>
+      <MealModal />
+    </>
   );
 };
 

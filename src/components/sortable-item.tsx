@@ -1,12 +1,18 @@
+import { useModalStore } from "@/hooks/modal-store";
+import type { Meal } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ReactNode } from "react";
 
 export const SortableItem = ({
-  id,
+  meal,
   className,
   children,
-}: Readonly<{ id: string; className?: string; children: ReactNode }>) => {
+}: Readonly<{
+  meal: Meal;
+  className?: string;
+  children: ReactNode;
+}>) => {
   const {
     attributes,
     listeners,
@@ -14,7 +20,14 @@ export const SortableItem = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id: meal.id });
+  const { openModal, setModalState, setActiveMeal } = useModalStore();
+
+  const handleOnClick = () => {
+    setActiveMeal(meal);
+    setModalState("meal");
+    openModal();
+  };
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -29,6 +42,7 @@ export const SortableItem = ({
       style={style}
       {...attributes}
       {...listeners}
+      onClick={handleOnClick}
     >
       {children}
     </div>

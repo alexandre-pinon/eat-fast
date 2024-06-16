@@ -14,6 +14,13 @@ export type Meal = {
   type: MealType;
   image?: string;
 };
+export type Ingredient = {
+  id: string;
+  name: string;
+  quantity: number;
+  unit?: "g" | "kg" | "ml" | "cl" | "l" | "tsp" | "tbsp";
+};
+export type ModalState = "meal" | "history" | "menu";
 
 export type OrId<T> = T | { id: string };
 export type Nullable<T> = T | null;

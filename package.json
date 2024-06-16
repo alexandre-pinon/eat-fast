@@ -19,27 +19,28 @@
     "@dnd-kit/sortable": "8.0.0",
     "@dnd-kit/utilities": "3.2.2",
     "@neondatabase/serverless": "0.9.3",
-    "@nextui-org/react": "2.4.1",
-    "@nextui-org/theme": "2.2.5",
+    "@nextui-org/react": "2.4.2",
+    "@nextui-org/theme": "2.2.6",
     "dotenv-cli": "7.4.2",
-    "drizzle-orm": "0.31.1",
+    "drizzle-orm": "0.31.2",
     "framer-motion": "11.2.10",
-    "next": "14.2.3",
+    "next": "14.2.4",
     "next-auth": "5.0.0-beta.19",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-icons": "5.2.1",
-    "ts-pattern": "5.1.2"
+    "ts-pattern": "5.2.0",
+    "zustand": "4.5.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.8.0",
+    "@biomejs/biome": "1.8.1",
     "@types/node": "20.14.2",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
-    "drizzle-kit": "0.22.4",
+    "drizzle-kit": "0.22.7",
     "postcss": "8.4.38",
     "tailwindcss": "3.4.4",
     "typescript": "5.4.5"
   },
-  "packageManager": "pnpm@9.2.0+sha512.98a80fd11c2e7096747762304106432b3ddc67dcf54b5a8c01c93f68a2cd5e05e6821849522a06fb76284d41a2660d5e334f2ee3bbf29183bf2e739b1dafa771"
+  "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631"
 }

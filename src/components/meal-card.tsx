@@ -1,6 +1,6 @@
 import type { MealType } from "@/types";
+import { getPlaceHolderImageByType } from "@/utils";
 import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { match } from "ts-pattern";
 
 type MealCardProps = {
   type: MealType;
@@ -17,13 +17,6 @@ export const MealCard = ({
   image,
   isDragOverlay,
 }: MealCardProps) => {
-  const placeHolderImage = (type: MealType): string =>
-    match(type)
-      .with("breakfast", () => "/breakfast.jpeg")
-      .with("lunch", () => "/lunch.jpeg")
-      .with("diner", () => "/diner.jpeg")
-      .exhaustive();
-
   return (
     <Card
       className={`bg-primary text-primary-foreground text-start ${isDragOverlay ? "scale-105" : ""}`}
@@ -31,7 +24,7 @@ export const MealCard = ({
       <CardBody className="p-0">
         <Image
           className="rounded-b-none aspect-video object-cover"
-          src={image ?? placeHolderImage(type)}
+          src={image ?? getPlaceHolderImageByType(type)}
           alt={title}
         />
       </CardBody>

@@ -42,16 +42,19 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
   );
 };
 
-export const dispayMeal = (mealOrId: OrId<Meal>, isDragOverlay?: boolean) =>
+export const dispayMeal = (
+  mealOrId: OrId<Meal>,
+  opts?: { isDragOverlay?: boolean },
+) =>
   match(mealOrId)
     .with({ type: P.nonNullable }, (meal) => (
-      <SortableItem id={meal.id}>
+      <SortableItem meal={meal}>
         <MealCard
           type={meal.type}
           title={meal.title}
           time={meal.time}
           image={meal.image}
-          isDragOverlay={isDragOverlay}
+          isDragOverlay={opts?.isDragOverlay}
         />
       </SortableItem>
     ))
