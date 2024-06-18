@@ -49,12 +49,20 @@ const ingredients = [
     unit: "g",
   },
 ] satisfies Ingredient[];
+const instructions =
+  "Prepare the chicken broth by dissolving the two cubes in 1.5 liters of water, and let it simmer.\nSlice the mushrooms and cut the chorizo into quarter slices.\nBrown the chorizo in a pot without adding any fat, until it has reduced well and is nicely colored.\nSet aside the chorizo, keeping the rendered oil in the pot.\nWithout rinsing the rice, add it to the pot. Stir it with a wooden spoon until it turns orange and starts to heat through.\nKeeping the pot over medium heat, cover the rice with simmering broth and let it reduce, stirring occasionally.";
 
 export const MealModal = () => {
   const { isModalOpen, closeModal, modalState, activeMeal } = useModalStore();
 
   return (
-    <Modal size="5xl" isOpen={isModalOpen} onClose={closeModal} hideCloseButton>
+    <Modal
+      size="5xl"
+      isOpen={isModalOpen}
+      onClose={closeModal}
+      hideCloseButton
+      scrollBehavior="inside"
+    >
       <ModalContent>{renderModalContent(modalState, activeMeal)}</ModalContent>
     </Modal>
   );
@@ -82,16 +90,16 @@ const MealModalContent = ({ activeMeal }: { activeMeal: Nullable<Meal> }) => {
   };
 
   return activeMeal ? (
-    <>
+    <ModalBody className="p-0">
       <Image
         className="rounded-b-none aspect-[3] object-cover"
         src={activeMeal.image ?? getPlaceHolderImageByType(activeMeal.type)}
         alt={activeMeal.title}
       />
-      <ModalBody className="px-10 py-4 grid grid-cols-[1fr_max-content]">
-        <div className="space-y-6">
+      <div className="px-10 py-4 grid grid-cols-[1fr_max-content]">
+        <div>
           <p className="text-xl font-semibold">{activeMeal.title}</p>
-          <p className="text-lg font-medium">Ingredients</p>
+          <p className="text-lg font-medium mt-6 mb-4">Ingredients</p>
           <div className="flex flex-col gap-y-3">
             {ingredients.map((ingredient) => (
               <IngredientItem
@@ -122,8 +130,16 @@ const MealModalContent = ({ activeMeal }: { activeMeal: Nullable<Meal> }) => {
             <span>~ {activeMeal.time}min</span>
           </div>
         </div>
-      </ModalBody>
-    </>
+        <div className="col-span-2">
+          <p className="text-lg font-medium mt-6 mb-4">Instructions</p>
+          <ul className="list-disc list-inside space-y-4">
+            {instructions.split("\n").map((instruction) => (
+              <li key={instruction}>{instruction}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </ModalBody>
   ) : (
     <ModalBody>No active meal.</ModalBody>
   );
