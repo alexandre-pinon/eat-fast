@@ -1,4 +1,5 @@
-import type { Meal, ModalState, Nullable } from "@/types";
+import type { ModalState, PartialMeal } from "@/types";
+import { v4 as uuid } from "uuid";
 import { create } from "zustand";
 
 type ModalStore = {
@@ -7,8 +8,8 @@ type ModalStore = {
   closeModal: () => void;
   modalState: ModalState;
   setModalState: (newState: ModalState) => void;
-  activeMeal: Nullable<Meal>;
-  setActiveMeal: (newActiveMeal: Nullable<Meal>) => void;
+  activeMeal: PartialMeal;
+  setActiveMeal: (newActiveMeal: PartialMeal) => void;
 };
 
 export const useModalStore = create<ModalStore>((set) => ({
@@ -17,6 +18,9 @@ export const useModalStore = create<ModalStore>((set) => ({
   closeModal: () => set({ isModalOpen: false }),
   modalState: "meal",
   setModalState: (newState) => set({ modalState: newState }),
-  activeMeal: null,
+  activeMeal: {
+    id: uuid(),
+    type: "lunch",
+  },
   setActiveMeal: (newActiveMeal) => set({ activeMeal: newActiveMeal }),
 }));

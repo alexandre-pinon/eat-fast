@@ -1,4 +1,4 @@
-import type { Meal, OrId } from "@/types";
+import type { Meal, MealType, OrId } from "@/types";
 import { SortableContext, rectSwappingStrategy } from "@dnd-kit/sortable";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import { P, match } from "ts-pattern";
@@ -26,15 +26,15 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
         <CardBody className="grid grid-rows-3 gap-y-4">
           <div className="flex flex-col gap-y-2">
             <span>Breakfast</span>
-            {dispayMeal(breakfast)}
+            {dispayMeal(breakfast, "breakfast")}
           </div>
           <div className="flex flex-col gap-y-2">
             <span>Lunch</span>
-            {dispayMeal(lunch)}
+            {dispayMeal(lunch, "lunch")}
           </div>
           <div className="flex flex-col gap-y-2">
             <span>Diner</span>
-            {dispayMeal(diner)}
+            {dispayMeal(diner, "diner")}
           </div>
         </CardBody>
       </Card>
@@ -44,13 +44,14 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
 
 export const dispayMeal = (
   mealOrId: OrId<Meal>,
+  type: MealType,
   opts?: { isDragOverlay?: boolean },
 ) =>
   match(mealOrId)
     .with({ type: P.nonNullable }, (meal) => (
       <SortableItem meal={meal}>
         <MealCard
-          type={meal.type}
+          type={type}
           title={meal.title}
           time={meal.time}
           image={meal.image}
@@ -63,6 +64,6 @@ export const dispayMeal = (
         className="flex-grow flex justify-center items-center"
         id={id}
       >
-        <AddMealButton />
+        <AddMealButton type={type} />
       </DroppableItem>
     ));

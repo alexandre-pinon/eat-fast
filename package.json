@@ -30,6 +30,7 @@
     "react-dom": "18.3.1",
     "react-icons": "5.2.1",
     "ts-pattern": "5.2.0",
+    "uuid": "10.0.0",
     "zustand": "4.5.2"
   },
   "devDependencies": {
@@ -37,10 +38,11 @@
     "@types/node": "20.14.2",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
+    "@types/uuid": "9.0.8",
     "drizzle-kit": "0.22.7",
     "postcss": "8.4.38",
     "tailwindcss": "3.4.4",
     "typescript": "5.4.5"
   },
-  "packageManager": "pnpm@9.3.0+sha512.ee7b93e0c2bd11409c6424f92b866f31d3ea1bef5fbe47d3c7500cdc3c9668833d2e55681ad66df5b640c61fa9dc25d546efa54d76d7f8bf54b13614ac293631"
+  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
 }

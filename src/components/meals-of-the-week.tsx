@@ -1,5 +1,5 @@
 "use client";
-import type { Meal, Nullable, OrId, WeekDay } from "@/types";
+import type { Meal, Nullable, WeekDay } from "@/types";
 import {
   DndContext,
   type DragEndEvent,
@@ -27,7 +27,7 @@ type MealData = Record<WeekDay, (Meal | { id: string })[]>;
 type MealsOfTheWeekProps = { data: MealData };
 export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
   const [mealsOfTheWeek, setMealsOfTheWeek] = useState(data);
-  const [activeMeal, setActiveMeal] = useState<Nullable<OrId<Meal>>>(null);
+  const [activeMeal, setActiveMeal] = useState<Nullable<Meal>>(null);
   const [lastSwap, setLastSwap] = useState<Nullable<LastSwap>>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -46,8 +46,12 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
       console.warn({ event, mealsOfTheWeek }, "active meal not found?");
       return;
     }
+    if (!(activeMeal as Meal).type) {
+      console.warn({ activeMeal }, "active meal has no type");
+      return;
+    }
 
-    setActiveMeal(activeMeal);
+    setActiveMeal(activeMeal as Meal);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -196,7 +200,9 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
           <DayOfTheWeekCard key={day} day={day} meals={meals} />
         ))}
         <DragOverlay>
-          {activeMeal ? dispayMeal(activeMeal, { isDragOverlay: true }) : null}
+          {activeMeal
+            ? dispayMeal(activeMeal, activeMeal.type, { isDragOverlay: true })
+            : null}
         </DragOverlay>
       </DndContext>
       <MealModal />
