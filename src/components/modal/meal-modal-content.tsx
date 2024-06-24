@@ -232,6 +232,11 @@ export const MealModalContent = ({
             </ul>
           )}
         </div>
+        <div className="col-span-full justify-self-end mt-10">
+          <Button color="danger" variant="ghost" isIconOnly>
+            <TbTrash size={20} />
+          </Button>
+        </div>
       </form>
     </ModalBody>
   );

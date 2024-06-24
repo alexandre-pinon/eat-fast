@@ -13,7 +13,7 @@ import {
 } from "@dnd-kit/core";
 import { arraySwap } from "@dnd-kit/sortable";
 import { useState } from "react";
-import { DayOfTheWeekCard, dispayMeal } from "./day-of-the-week-card";
+import { DayOfTheWeekCard, dispayDndItem } from "./day-of-the-week-card";
 import { MealModal } from "./modal/meal-modal";
 
 type LastSwap = {
@@ -201,7 +201,9 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
         ))}
         <DragOverlay>
           {activeMeal
-            ? dispayMeal(activeMeal, activeMeal.type, { isDragOverlay: true })
+            ? dispayDndItem(activeMeal, activeMeal.type, {
+                isDragOverlay: true,
+              })
             : null}
         </DragOverlay>
       </DndContext>

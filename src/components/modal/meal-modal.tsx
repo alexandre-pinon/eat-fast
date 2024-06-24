@@ -3,6 +3,7 @@ import type { ModalState, PartialMeal } from "@/types";
 import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import { TbCirclePlus, TbHistory } from "react-icons/tb";
 import { match } from "ts-pattern";
+import { HistoryModalContent } from "./history-modal-content";
 import { MealModalContent } from "./meal-modal-content";
 
 export const MealModal = () => {
@@ -34,10 +35,6 @@ const renderModalContent = (
     .with("history", () => <HistoryModalContent />)
     .with("menu", () => <MenuModalContent setModalState={setModalState} />)
     .exhaustive();
-};
-
-const HistoryModalContent = () => {
-  return <ModalBody className="">History modal body</ModalBody>;
 };
 
 const MenuModalContent = ({

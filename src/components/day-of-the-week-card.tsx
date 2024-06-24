@@ -26,15 +26,15 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
         <CardBody className="grid grid-rows-3 gap-y-4">
           <div className="flex flex-col gap-y-2">
             <span>Breakfast</span>
-            {dispayMeal(breakfast, "breakfast")}
+            {dispayDndItem(breakfast, "breakfast")}
           </div>
           <div className="flex flex-col gap-y-2">
             <span>Lunch</span>
-            {dispayMeal(lunch, "lunch")}
+            {dispayDndItem(lunch, "lunch")}
           </div>
           <div className="flex flex-col gap-y-2">
             <span>Diner</span>
-            {dispayMeal(diner, "diner")}
+            {dispayDndItem(diner, "diner")}
           </div>
         </CardBody>
       </Card>
@@ -42,7 +42,7 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
   );
 };
 
-export const dispayMeal = (
+export const dispayDndItem = (
   mealOrId: OrId<Meal>,
   type: MealType,
   opts?: { isDragOverlay?: boolean },
