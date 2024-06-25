@@ -7,7 +7,7 @@ import { v4 as uuid } from "uuid";
 export const AddMealButton = ({ type }: { type: MealType }) => {
   const { openModal, setModalState, setActiveMeal } = useModalStore();
 
-  const handleOnPress = () => {
+  const onPressAddMeal = () => {
     setActiveMeal({
       id: uuid(),
       type,
@@ -17,7 +17,7 @@ export const AddMealButton = ({ type }: { type: MealType }) => {
   };
 
   return (
-    <Button isIconOnly onPress={handleOnPress} color="primary" radius="full">
+    <Button isIconOnly onPress={onPressAddMeal} color="primary" radius="full">
       <TbPlus size={24} />
     </Button>
   );

@@ -1,5 +1,5 @@
 import { useModalStore } from "@/hooks/modal-store";
-import type { ModalState, PartialMeal } from "@/types";
+import type { ModalState } from "@/types";
 import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import { TbCirclePlus, TbHistory } from "react-icons/tb";
 import { match } from "ts-pattern";
@@ -7,8 +7,7 @@ import { HistoryModalContent } from "./history-modal-content";
 import { MealModalContent } from "./meal-modal-content";
 
 export const MealModal = () => {
-  const { isModalOpen, closeModal, modalState, setModalState, activeMeal } =
-    useModalStore();
+  const { isModalOpen, closeModal, modalState } = useModalStore();
 
   return (
     <Modal
@@ -18,28 +17,34 @@ export const MealModal = () => {
       hideCloseButton
       scrollBehavior="inside"
     >
-      <ModalContent>
-        {renderModalContent(modalState, setModalState, activeMeal)}
-      </ModalContent>
+      <ModalContent>{renderModalContent(modalState)}</ModalContent>
     </Modal>
   );
 };
 
-const renderModalContent = (
-  modalState: ModalState,
-  setModalState: (newModalState: ModalState) => void,
-  activeMeal: PartialMeal,
-) => {
+const renderModalContent = (modalState: ModalState) => {
   return match(modalState)
-    .with("meal", () => <MealModalContent activeMeal={activeMeal} />)
+    .with("meal", () => <MealModalContent />)
     .with("history", () => <HistoryModalContent />)
-    .with("menu", () => <MenuModalContent setModalState={setModalState} />)
+    .with("menu", () => <MenuModalContent />)
     .exhaustive();
 };
 
-const MenuModalContent = ({
-  setModalState,
-}: { setModalState: (newModalState: ModalState) => void }) => {
+const MenuModalContent = () => {
+  const { setModalState, showBackLink, setPrevModalState } = useModalStore();
+
+  const onPressNewMeal = () => {
+    setPrevModalState("menu");
+    showBackLink();
+    setModalState("meal");
+  };
+
+  const onPressMealHistory = () => {
+    setPrevModalState("menu");
+    showBackLink();
+    setModalState("history");
+  };
+
   return (
     <ModalBody className="grid grid-cols-2 px-2">
       <Button
@@ -48,7 +53,7 @@ const MenuModalContent = ({
         className="py-40"
         startContent={<TbCirclePlus size={24} />}
         disableRipple
-        onPress={() => setModalState("meal")}
+        onPress={onPressNewMeal}
       >
         New meal
       </Button>
@@ -58,7 +63,7 @@ const MenuModalContent = ({
         className="py-40"
         startContent={<TbHistory size={24} />}
         disableRipple
-        onPress={() => setModalState("history")}
+        onPress={onPressMealHistory}
       >
         Add from history
       </Button>

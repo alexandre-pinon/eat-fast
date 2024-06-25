@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { type Key, useMemo, useState } from "react";
-import { TbSearch, TbTrash } from "react-icons/tb";
+import { TbArrowBack, TbSearch, TbTrash } from "react-icons/tb";
 import { v4 as uuid } from "uuid";
 
 type HistoryMeal = {
@@ -51,7 +51,13 @@ const historyMeals = [
 
 export const HistoryModalContent = () => {
   const [filterValue, setFilterValue] = useState("");
-  const { setModalState, setActiveMeal } = useModalStore();
+  const {
+    setModalState,
+    setActiveMeal,
+    setPrevModalState,
+    showBackLink,
+    isBackLinkVisible,
+  } = useModalStore();
 
   const filteredMeals = useMemo(
     () =>
@@ -69,11 +75,24 @@ export const HistoryModalContent = () => {
       type: "lunch",
       title: filteredMeals.find((meal) => meal.id === key)?.name,
     });
+    setPrevModalState("history");
+    showBackLink();
     setModalState("meal");
+  };
+
+  const onPressBacklink = () => {
+    setModalState("menu");
   };
 
   return (
     <ModalBody className="p-2">
+      {isBackLinkVisible ? (
+        <Button isIconOnly variant="light" onPress={onPressBacklink}>
+          <TbArrowBack size={32} />
+        </Button>
+      ) : (
+        <></>
+      )}
       <div className="flex justify-between py-2 pl-2">
         <span className="text-xl font-semibold">Meal history</span>
         <Input

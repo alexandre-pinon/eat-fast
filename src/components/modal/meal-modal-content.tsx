@@ -1,4 +1,5 @@
-import { type Ingredient, type PartialMeal, units } from "@/types";
+import { useModalStore } from "@/hooks/modal-store";
+import { type Ingredient, units } from "@/types";
 import { getPlaceHolderImageByType } from "@/utils";
 import {
   Button,
@@ -12,6 +13,7 @@ import {
 } from "@nextui-org/react";
 import { useState } from "react";
 import {
+  TbArrowBack,
   TbCircle,
   TbCircleCheck,
   TbCirclePlus,
@@ -55,13 +57,17 @@ const ingredientsFetched = [
 const instructions =
   "Prepare the chicken broth by dissolving the two cubes in 1.5 liters of water, and let it simmer.\nSlice the mushrooms and cut the chorizo into quarter slices.\nBrown the chorizo in a pot without adding any fat, until it has reduced well and is nicely colored.\nSet aside the chorizo, keeping the rendered oil in the pot.\nWithout rinsing the rice, add it to the pot. Stir it with a wooden spoon until it turns orange and starts to heat through.\nKeeping the pot over medium heat, cover the rice with simmering broth and let it reduce, stirring occasionally.";
 
-export const MealModalContent = ({
-  activeMeal,
-}: { activeMeal: PartialMeal }) => {
+export const MealModalContent = () => {
+  const {
+    activeMeal,
+    isBackLinkVisible,
+    prevModalState,
+    setModalState,
+    setPrevModalState,
+  } = useModalStore();
   const [servings, setServings] = useState(4);
   const [editMode, setEditMode] = useState(false);
   const [ingredients, setIngredients] = useState(ingredientsFetched);
-  const [meal] = useState(activeMeal);
 
   const decrementServings = () => {
     setServings((prevServings) =>
@@ -91,12 +97,30 @@ export const MealModalContent = ({
     );
   };
 
+  const onPressBacklink = () => {
+    if (prevModalState) {
+      setModalState(prevModalState);
+    }
+  };
+
   return (
     <ModalBody className="p-0">
+      {isBackLinkVisible ? (
+        <Button
+          className="absolute top-3 left-3 z-20"
+          isIconOnly
+          variant="light"
+          onPress={onPressBacklink}
+        >
+          <TbArrowBack size={40} />
+        </Button>
+      ) : (
+        <></>
+      )}
       <Image
         className="rounded-b-none aspect-[3] object-cover"
-        src={meal.image ?? getPlaceHolderImageByType(meal.type)}
-        alt={meal.title ?? "meal image"}
+        src={activeMeal.image ?? getPlaceHolderImageByType(activeMeal.type)}
+        alt={activeMeal.title ?? "meal image"}
       />
       <form className="px-10 py-4 grid grid-cols-[1fr_max-content] gap-x-4">
         <div>
@@ -106,13 +130,13 @@ export const MealModalContent = ({
               variant="flat"
               type="text"
               name="title"
-              defaultValue={meal?.title}
+              defaultValue={activeMeal?.title}
               placeholder="Meal title"
               size="lg"
             />
           ) : (
             <p className="text-xl font-semibold">
-              {meal.title ?? `New ${meal.type}`}
+              {activeMeal.title ?? `New ${activeMeal.type}`}
             </p>
           )}
           <p className="text-lg font-medium mt-6 mb-4">Ingredients</p>
@@ -205,7 +229,7 @@ export const MealModalContent = ({
               label="Total time"
               labelPlacement="outside-left"
               endContent={<span className="text-small">min</span>}
-              defaultValue={meal.time?.toFixed() ?? "0"}
+              defaultValue={activeMeal.time?.toFixed() ?? "0"}
               type="number"
               name="time"
               classNames={{
@@ -216,7 +240,7 @@ export const MealModalContent = ({
           ) : (
             <div>
               <span className="font-medium">Total time : </span>
-              <span>{meal.time ?? 0}min</span>
+              <span>{activeMeal.time ?? 0}min</span>
             </div>
           )}
         </div>
