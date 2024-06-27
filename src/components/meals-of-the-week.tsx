@@ -12,7 +12,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { arraySwap } from "@dnd-kit/sortable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DayOfTheWeekCard, dispayDndItem } from "./day-of-the-week-card";
 import { MealModal } from "./modal/meal-modal";
 
@@ -24,8 +24,19 @@ type LastSwap = {
 };
 type MealData = Record<WeekDay, (Meal | { id: string })[]>;
 
+const getWeekMeals = async () => {
+  const res = await fetch("/api/week-meals");
+  const weekMeals = await res.json();
+  console.log({ weekMeals });
+  return weekMeals;
+};
+
 type MealsOfTheWeekProps = { data: MealData };
 export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
+  useEffect(() => {
+    getWeekMeals();
+  }, []);
+
   const [mealsOfTheWeek, setMealsOfTheWeek] = useState(data);
   const [activeMeal, setActiveMeal] = useState<Nullable<Meal>>(null);
   const [lastSwap, setLastSwap] = useState<Nullable<LastSwap>>(null);
@@ -190,6 +201,7 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
   return (
     <>
       <DndContext
+        id={"dnd-context-meals"}
         collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}

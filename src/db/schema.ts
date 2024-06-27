@@ -1,18 +1,35 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { sql } from "drizzle-orm";
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import type { AdapterAccountType } from "next-auth/adapters";
+import type { AdapterAccount } from "next-auth/adapters";
 
-const neonConn = neon(process.env.AUTH_DRIZZLE_URL as string);
-export const db = drizzle(neonConn);
+export const mealType = pgEnum("meal_type", ["breakfast", "lunch", "diner"]);
+export const weekDay = pgEnum("week_day", [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+]);
+export const quantityUnit = pgEnum("quantity_unit", [
+  "g",
+  "kg",
+  "ml",
+  "cl",
+  "l",
+  "tsp",
+  "tbsp",
+]);
 
 export const users = pgTable("user", {
   id: uuid("id")
@@ -22,6 +39,10 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .$onUpdate(() => sql`NOW()`),
 });
 
 export const accounts = pgTable(
@@ -30,7 +51,7 @@ export const accounts = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccountType>().notNull(),
+    type: text("type").$type<AdapterAccount["type"]>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),
@@ -40,6 +61,10 @@ export const accounts = pgTable(
     scope: text("scope"),
     id_token: text("id_token"),
     session_state: text("session_state"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .$onUpdate(() => sql`NOW()`),
   },
   (account) => ({
     compoundKey: primaryKey({
@@ -57,11 +82,15 @@ export const sessions = pgTable("session", {
 });
 
 export const verificationTokens = pgTable(
-  "verificationToken",
+  "verification_token",
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .$onUpdate(() => sql`NOW()`),
   },
   (verficationToken) => ({
     compositePk: primaryKey({
@@ -83,6 +112,10 @@ export const authenticators = pgTable(
     credentialDeviceType: text("credential_device_type").notNull(),
     credentialBackedUp: boolean("credential_backed_up").notNull(),
     transports: text("transports"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .$onUpdate(() => sql`NOW()`),
   },
   (authenticator) => ({
     compositePK: primaryKey({
@@ -90,3 +123,47 @@ export const authenticators = pgTable(
     }),
   }),
 );
+
+export const meals = pgTable("meal", {
+  id: uuid("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  type: mealType("meal_type").notNull(),
+  weekDay: weekDay("week_day").notNull(),
+  time: integer("time").notNull(),
+  image: text("image"),
+  recipe: text("recipe"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .$onUpdate(() => sql`NOW()`),
+});
+
+export const ingredients = pgTable("ingredient", {
+  id: uuid("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .$onUpdate(() => sql`NOW()`),
+});
+
+export const mealsToIngredients = pgTable("meals_to_ingredients", {
+  mealId: uuid("meal_id")
+    .notNull()
+    .references(() => meals.id, { onDelete: "cascade" }),
+  ingredientId: uuid("ingredient_id")
+    .notNull()
+    .references(() => ingredients.id, { onDelete: "cascade" }),
+  quantity: integer("quantity").notNull().default(0),
+  unit: quantityUnit("unit"),
+});

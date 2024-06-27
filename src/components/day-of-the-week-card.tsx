@@ -64,6 +64,6 @@ export const dispayDndItem = (
         className="flex-grow flex justify-center items-center"
         id={id}
       >
-        <AddMealButton type={type} />
+        <AddMealButton id={id} type={type} />
       </DroppableItem>
     ));

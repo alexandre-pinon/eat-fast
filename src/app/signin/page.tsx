@@ -1,19 +1,17 @@
-import { providerMap, signIn } from "@/auth";
 import { Logo } from "@/components/logo";
+import { ProviderSignIn } from "@/components/provider-sign-in";
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
-  Divider,
-  Input,
+  Skeleton,
   Spacer,
 } from "@nextui-org/react";
-import type { ReactNode } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { match } from "ts-pattern";
+import { getProviders } from "next-auth/react";
 
-export default function SignInPage() {
+export default async function SignInPage() {
+  const providers = await getProviders();
+
   return (
     <main className="grid place-items-center min-h-screen">
       <Card className="w-full max-w-xl p-4">
@@ -22,66 +20,15 @@ export default function SignInPage() {
         </CardHeader>
         <Spacer y={12} />
         <CardBody>
-          {Object.values(providerMap).map((provider) => (
-            <ProviderSignIn key={provider.id} provider={provider} />
-          ))}
+          {providers ? (
+            Object.values(providers).map((provider) => (
+              <ProviderSignIn key={provider.id} provider={provider} />
+            ))
+          ) : (
+            <Skeleton className="w-full h-10 rounded-lg" />
+          )}
         </CardBody>
       </Card>
     </main>
   );
 }
-
-const ProviderSignIn = ({
-  provider,
-}: { provider: (typeof providerMap)[number] }) => {
-  const providerIconMap = (provider: string): ReactNode | undefined =>
-    match(provider)
-      .with("google", () => <FcGoogle size={16} />)
-      .otherwise(() => undefined);
-
-  return (
-    <form
-      action={async (formData) => {
-        "use server";
-        formData.set("redirectTo", "/meals-of-the-week");
-        await signIn(provider.id, formData);
-      }}
-    >
-      {provider.id === "resend" ? (
-        <div className="space-y-2">
-          <div className="flex items-center gap-x-2 my-4">
-            <Divider className="shrink" />
-            <span className="uppercase text-foreground-500">or</span>
-            <Divider className="shrink" />
-          </div>
-          <Input
-            color="default"
-            type="email"
-            name="email"
-            placeholder="Email"
-          />
-          <Button
-            className="w-full"
-            type="submit"
-            color="primary"
-            variant="solid"
-          >
-            Sign in with email
-          </Button>
-        </div>
-      ) : (
-        <>
-          <Button
-            className="w-full"
-            type="submit"
-            color="default"
-            variant="bordered"
-            startContent={providerIconMap(provider.id)}
-          >
-            Sign in with {provider.name}
-          </Button>
-        </>
-      )}
-    </form>
-  );
-};

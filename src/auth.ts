@@ -1,33 +1,23 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth from "next-auth";
-import type { Provider } from "next-auth/providers";
-import Google from "next-auth/providers/google";
-import Resend from "next-auth/providers/resend";
-import { accounts, db, sessions, users, verificationTokens } from "./db/schema";
+import type { Adapter } from "next-auth/adapters";
+import GoogleProvider from "next-auth/providers/google";
+import { db } from "./db/client";
+import { accounts, sessions, users, verificationTokens } from "./db/schema";
 
-const providers = [
-  Google,
-  Resend({
-    from: "eat-fast@resend.dev",
-  }),
-] satisfies Provider[];
-
-export const providerMap = providers.map((provider) => {
-  if (typeof provider === "function") {
-    const providerData = provider({});
-    return { id: providerData.id, name: providerData.name };
-  }
-  return { id: provider.id, name: provider.name };
-});
-
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const handler = NextAuth({
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
-  }),
-  providers,
+  }) as Adapter,
+  providers: [
+    GoogleProvider({
+      clientId: process.env.AUTH_GOOGLE_ID as string,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET as string,
+    }),
+  ],
   pages: {
     signIn: "/signin",
   },
@@ -35,5 +25,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     colorScheme: "light",
     logo: "/logo.svg",
     brandColor: "#DA1C52",
+  },
+  session: {
+    strategy: "jwt",
   },
 });
