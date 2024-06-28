@@ -1,5 +1,7 @@
 "use client";
-import type { Meal, Nullable, WeekDay } from "@/types";
+import type { NonEmptyMeal, WeekMeal, WeekMealData } from "@/entities/meal";
+import type { Nullable } from "@/types";
+import type { WeekDay } from "@/types/weekday";
 import {
   DndContext,
   type DragEndEvent,
@@ -12,7 +14,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { arraySwap } from "@dnd-kit/sortable";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DayOfTheWeekCard, dispayDndItem } from "./day-of-the-week-card";
 import { MealModal } from "./modal/meal-modal";
 
@@ -22,23 +24,11 @@ type LastSwap = {
   lastOverWeekDay: WeekDay;
   lastOverIndex: number;
 };
-type MealData = Record<WeekDay, (Meal | { id: string })[]>;
 
-const getWeekMeals = async () => {
-  const res = await fetch("/api/week-meals");
-  const weekMeals = await res.json();
-  console.log({ weekMeals });
-  return weekMeals;
-};
-
-type MealsOfTheWeekProps = { data: MealData };
+type MealsOfTheWeekProps = { data: WeekMealData };
 export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
-  useEffect(() => {
-    getWeekMeals();
-  }, []);
-
   const [mealsOfTheWeek, setMealsOfTheWeek] = useState(data);
-  const [activeMeal, setActiveMeal] = useState<Nullable<Meal>>(null);
+  const [draggedMeal, setDraggedMeal] = useState<Nullable<NonEmptyMeal>>(null);
   const [lastSwap, setLastSwap] = useState<Nullable<LastSwap>>(null);
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -51,18 +41,14 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
   const handleDragStart = (event: DragStartEvent) => {
     const activeMeal = Object.values(mealsOfTheWeek)
       .flat()
-      .find((meal) => meal.id === event.active.id);
+      .find(meal => meal.id === event.active.id);
 
-    if (!activeMeal) {
+    if (!activeMeal || activeMeal?.empty) {
       console.warn({ event, mealsOfTheWeek }, "active meal not found?");
       return;
     }
-    if (!(activeMeal as Meal).type) {
-      console.warn({ activeMeal }, "active meal has no type");
-      return;
-    }
 
-    setActiveMeal(activeMeal as Meal);
+    setDraggedMeal(activeMeal);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -83,6 +69,13 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
 
       const undoActiveMeals = [...mealsOfTheWeek[lastActiveWeekDay]];
       const undoOverMeals = [...mealsOfTheWeek[lastOverWeekDay]];
+
+      swapMealTypes(
+        undoActiveMeals[lastActiveIndex],
+        undoOverMeals[lastOverIndex],
+      );
+
+      // undo swap
       undoActiveMeals[lastActiveIndex] =
         mealsOfTheWeek[lastOverWeekDay][lastOverIndex];
       undoOverMeals[lastOverIndex] =
@@ -113,41 +106,39 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
       return;
     }
 
-    setMealsOfTheWeek((prevMeals) => {
-      const activeMeals = newMealsOfTheWeek[activeWeekDay];
-      const overMeals = newMealsOfTheWeek[overWeekDay];
+    const activeMeals = newMealsOfTheWeek[activeWeekDay];
+    const overMeals = newMealsOfTheWeek[overWeekDay];
+    const activeIndex = activeMeals.findIndex(meal => meal.id === activeId);
+    const overIndex = overMeals.findIndex(meal => meal.id === overId);
 
-      const activeIndex = activeMeals.findIndex((meal) => meal.id === activeId);
-      const overIndex = overMeals.findIndex((meal) => meal.id === overId);
+    if (activeIndex === -1 || overIndex === -1) {
+      console.log(
+        { mealsOfTheWeek, activeMeals, overMeals, activeId, overId },
+        "activeIndex/overIndex not found?",
+      );
+      return;
+    }
 
-      if (activeIndex === -1 || overIndex === -1) {
-        console.log(
-          { prevMeals, activeMeals, overMeals, activeId, overId },
-          "activeIndex/overIndex not found?",
-        );
-        return prevMeals;
-      }
+    swapMealTypes(activeMeals[activeIndex], overMeals[overIndex]);
 
-      const newActiveMeals = [...activeMeals];
-      const newOverMeals = [...overMeals];
-      newActiveMeals[activeIndex] = overMeals[overIndex];
-      newOverMeals[overIndex] = activeMeals[activeIndex];
+    // meal swap
+    const newActiveMeals = [...activeMeals];
+    const newOverMeals = [...overMeals];
+    newActiveMeals[activeIndex] = overMeals[overIndex];
+    newOverMeals[overIndex] = activeMeals[activeIndex];
 
-      newMealsOfTheWeek = {
-        ...newMealsOfTheWeek,
-        [activeWeekDay]: newActiveMeals,
-        [overWeekDay]: newOverMeals,
-      };
+    newMealsOfTheWeek = {
+      ...newMealsOfTheWeek,
+      [activeWeekDay]: newActiveMeals,
+      [overWeekDay]: newOverMeals,
+    };
 
-      // Save the last swap
-      setLastSwap({
-        lastActiveWeekDay: activeWeekDay,
-        lastActiveIndex: activeIndex,
-        lastOverWeekDay: overWeekDay,
-        lastOverIndex: overIndex,
-      });
-
-      return newMealsOfTheWeek;
+    setMealsOfTheWeek(newMealsOfTheWeek);
+    setLastSwap({
+      lastActiveWeekDay: activeWeekDay,
+      lastActiveIndex: activeIndex,
+      lastOverWeekDay: overWeekDay,
+      lastOverIndex: overIndex,
     });
   };
 
@@ -176,25 +167,22 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
       return;
     }
 
-    setMealsOfTheWeek((prevMeals) => {
-      const activeMeals = prevMeals[activeWeekDay];
-      const overMeals = prevMeals[overWeekDay];
+    const activeMeals = mealsOfTheWeek[activeWeekDay];
+    const activeIndex = activeMeals.findIndex(meal => meal.id === activeId);
+    const overIndex = activeMeals.findIndex(meal => meal.id === overId);
+    if (activeIndex === -1 || overIndex === -1) {
+      console.log(
+        { mealsOfTheWeek, activeMeals, activeId, overId },
+        "activeIndex/overIndex not found?",
+      );
+      return;
+    }
 
-      const activeIndex = activeMeals.findIndex((meal) => meal.id === activeId);
-      const overIndex = overMeals.findIndex((meal) => meal.id === overId);
+    swapMealTypes(activeMeals[activeIndex], activeMeals[overIndex]);
 
-      if (activeIndex === -1 || overIndex === -1) {
-        console.log(
-          { prevMeals, activeMeals, overMeals, activeId, overId },
-          "activeIndex/overIndex not found?",
-        );
-        return prevMeals;
-      }
-
-      return {
-        ...prevMeals,
-        [activeWeekDay]: arraySwap(activeMeals, activeIndex, overIndex),
-      };
+    setMealsOfTheWeek({
+      ...mealsOfTheWeek,
+      [activeWeekDay]: arraySwap(activeMeals, activeIndex, overIndex),
     });
   };
 
@@ -209,13 +197,11 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
         sensors={sensors}
       >
         {Object.entries(mealsOfTheWeek).map(([day, meals]) => (
-          <DayOfTheWeekCard key={day} day={day} meals={meals} />
+          <DayOfTheWeekCard key={day} day={day as WeekDay} meals={meals} />
         ))}
         <DragOverlay>
-          {activeMeal
-            ? dispayDndItem(activeMeal, activeMeal.type, {
-                isDragOverlay: true,
-              })
+          {draggedMeal
+            ? dispayDndItem(draggedMeal, { isDragOverlay: true })
             : null}
         </DragOverlay>
       </DndContext>
@@ -224,10 +210,21 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
   );
 };
 
-const findWeekDay = (meals: MealData, mealId: string): Nullable<WeekDay> => {
+const findWeekDay = (
+  meals: WeekMealData,
+  mealId: string,
+): Nullable<WeekDay> => {
   const [weekDay] = Object.entries(meals).find(([_weekDay, meals]) =>
-    meals.map((meal) => meal.id).includes(mealId),
+    meals.map(meal => meal.id).includes(mealId),
   ) ?? [null, []];
 
   return weekDay as Nullable<WeekDay>;
+};
+
+//! this function has side effects
+const swapMealTypes = (meal1: WeekMeal, meal2: WeekMeal): void => {
+  const mealType1 = meal1.type;
+  const mealType2 = meal2.type;
+  meal1.type = mealType2;
+  meal2.type = mealType1;
 };

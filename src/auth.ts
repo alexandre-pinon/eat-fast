@@ -1,11 +1,16 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import NextAuth from "next-auth";
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
+import NextAuth, { getServerSession, type NextAuthOptions } from "next-auth";
 import type { Adapter } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
 import { db } from "./db/client";
 import { accounts, sessions, users, verificationTokens } from "./db/schema";
 
-export const handler = NextAuth({
+const config = {
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
@@ -29,4 +34,20 @@ export const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
-});
+  callbacks: {
+    session: ({ session, token }) => {
+      return { ...session, sub: token.sub };
+    },
+  },
+} satisfies NextAuthOptions;
+
+export const handler = NextAuth(config);
+
+export const auth = (
+  ...args:
+    | [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]]
+    | [NextApiRequest, NextApiResponse]
+    | []
+) => {
+  return getServerSession(...args, config);
+};

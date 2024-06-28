@@ -1,5 +1,5 @@
+import type { WeekMeal } from "@/entities/meal";
 import { useModalStore } from "@/hooks/modal-store";
-import type { Meal } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ReactNode } from "react";
@@ -9,7 +9,7 @@ export const SortableItem = ({
   className,
   children,
 }: Readonly<{
-  meal: Meal;
+  meal: WeekMeal;
   className?: string;
   children: ReactNode;
 }>) => {

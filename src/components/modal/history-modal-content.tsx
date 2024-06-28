@@ -1,3 +1,4 @@
+import type { Meal } from "@/entities/meal";
 import { useModalStore } from "@/hooks/modal-store";
 import {
   Button,
@@ -14,40 +15,28 @@ import { type Key, useMemo, useState } from "react";
 import { TbArrowBack, TbSearch, TbTrash } from "react-icons/tb";
 import { v4 as uuid } from "uuid";
 
-type HistoryMeal = {
-  id: string;
-  name: string;
-};
 const historyMeals = [
   {
     id: uuid(),
     name: "Eggs & bacon",
+    userId: uuid(),
+    type: "breakfast",
+    weekDay: "monday",
+    time: 12,
+    image: null,
+    recipe: null,
   },
   {
     id: uuid(),
     name: "Fish soup",
+    userId: uuid(),
+    type: "diner",
+    weekDay: "tuesday",
+    time: 30,
+    image: null,
+    recipe: "Mix the fish with the soup",
   },
-  {
-    id: uuid(),
-    name: "Steak with fries",
-  },
-  {
-    id: uuid(),
-    name: "Cereals",
-  },
-  {
-    id: uuid(),
-    name: "Pasta salad",
-  },
-  {
-    id: uuid(),
-    name: "Mustard chicken with rice",
-  },
-  {
-    id: uuid(),
-    name: "Chorizo and mushroom risotto",
-  },
-] satisfies HistoryMeal[];
+] satisfies Meal[];
 
 export const HistoryModalContent = () => {
   const [filterValue, setFilterValue] = useState("");
@@ -62,7 +51,7 @@ export const HistoryModalContent = () => {
   const filteredMeals = useMemo(
     () =>
       filterValue.length > 0
-        ? historyMeals.filter((meal) =>
+        ? historyMeals.filter(meal =>
             meal.name.toLowerCase().includes(filterValue.toLowerCase()),
           )
         : historyMeals,
@@ -70,14 +59,13 @@ export const HistoryModalContent = () => {
   );
 
   const onRowAction = (key: Key) => {
-    setActiveMeal({
-      id: key.toString(),
-      type: "lunch",
-      title: filteredMeals.find((meal) => meal.id === key)?.name,
-    });
-    setPrevModalState("history");
-    showBackLink();
-    setModalState("meal");
+    const rowMeal = filteredMeals.find(meal => meal.id === key);
+    if (rowMeal) {
+      setActiveMeal({ ...rowMeal, empty: false });
+      setPrevModalState("history");
+      showBackLink();
+      setModalState("meal");
+    }
   };
 
   const onPressBacklink = () => {
@@ -118,7 +106,7 @@ export const HistoryModalContent = () => {
           <TableColumn> </TableColumn>
         </TableHeader>
         <TableBody>
-          {filteredMeals.map((meal) => (
+          {filteredMeals.map(meal => (
             <TableRow className="cursor-pointer" key={meal.id}>
               <TableCell>{meal.name}</TableCell>
               <TableCell className="text-end">

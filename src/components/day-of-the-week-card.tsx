@@ -1,15 +1,16 @@
-import type { Meal, MealType, OrId } from "@/types";
+import type { WeekMeal } from "@/entities/meal";
+import type { WeekDay } from "@/types/weekday";
 import { SortableContext, rectSwappingStrategy } from "@dnd-kit/sortable";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
-import { P, match } from "ts-pattern";
+import { match } from "ts-pattern";
 import { AddMealButton } from "./add-meal-button";
 import { DroppableItem } from "./droppable-item";
 import { MealCard } from "./meal-card";
 import { SortableItem } from "./sortable-item";
 
 export type DayOfTheWeekCardProps = {
-  day: string;
-  meals: OrId<Meal>[];
+  day: WeekDay;
+  meals: WeekMeal[];
 };
 export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
   const [breakfast, lunch, diner] = meals;
@@ -26,15 +27,15 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
         <CardBody className="grid grid-rows-3 gap-y-4">
           <div className="flex flex-col gap-y-2">
             <span>Breakfast</span>
-            {dispayDndItem(breakfast, "breakfast")}
+            {dispayDndItem(breakfast)}
           </div>
           <div className="flex flex-col gap-y-2">
             <span>Lunch</span>
-            {dispayDndItem(lunch, "lunch")}
+            {dispayDndItem(lunch)}
           </div>
           <div className="flex flex-col gap-y-2">
             <span>Diner</span>
-            {dispayDndItem(diner, "diner")}
+            {dispayDndItem(diner)}
           </div>
         </CardBody>
       </Card>
@@ -43,27 +44,21 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
 };
 
 export const dispayDndItem = (
-  mealOrId: OrId<Meal>,
-  type: MealType,
+  meal: WeekMeal,
   opts?: { isDragOverlay?: boolean },
 ) =>
-  match(mealOrId)
-    .with({ type: P.nonNullable }, (meal) => (
-      <SortableItem meal={meal}>
-        <MealCard
-          type={type}
-          title={meal.title}
-          time={meal.time}
-          image={meal.image}
-          isDragOverlay={opts?.isDragOverlay}
-        />
+  match(meal)
+    .with({ empty: false }, nonEmptyMeal => (
+      <SortableItem meal={nonEmptyMeal}>
+        <MealCard meal={nonEmptyMeal} isDragOverlay={opts?.isDragOverlay} />
       </SortableItem>
     ))
-    .otherwise(({ id }) => (
+    .with({ empty: true }, emptyMeal => (
       <DroppableItem
         className="flex-grow flex justify-center items-center"
-        id={id}
+        id={emptyMeal.id}
       >
-        <AddMealButton id={id} type={type} />
+        <AddMealButton meal={emptyMeal} />
       </DroppableItem>
-    ));
+    ))
+    .exhaustive();

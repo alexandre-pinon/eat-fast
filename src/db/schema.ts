@@ -1,3 +1,4 @@
+import { weekDays } from "@/types/weekday";
 import { sql } from "drizzle-orm";
 import {
   boolean,
@@ -12,15 +13,7 @@ import {
 import type { AdapterAccount } from "next-auth/adapters";
 
 export const mealType = pgEnum("meal_type", ["breakfast", "lunch", "diner"]);
-export const weekDay = pgEnum("week_day", [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-]);
+export const weekDay = pgEnum("week_day", weekDays);
 export const quantityUnit = pgEnum("quantity_unit", [
   "g",
   "kg",
@@ -66,7 +59,7 @@ export const accounts = pgTable(
       .notNull()
       .$onUpdate(() => sql`NOW()`),
   },
-  (account) => ({
+  account => ({
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
@@ -92,7 +85,7 @@ export const verificationTokens = pgTable(
       .notNull()
       .$onUpdate(() => sql`NOW()`),
   },
-  (verficationToken) => ({
+  verficationToken => ({
     compositePk: primaryKey({
       columns: [verficationToken.identifier, verficationToken.token],
     }),
@@ -117,7 +110,7 @@ export const authenticators = pgTable(
       .notNull()
       .$onUpdate(() => sql`NOW()`),
   },
-  (authenticator) => ({
+  authenticator => ({
     compositePK: primaryKey({
       columns: [authenticator.userId, authenticator.credentialID],
     }),

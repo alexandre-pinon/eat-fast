@@ -11,7 +11,7 @@ import {
   SelectItem,
   Textarea,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   TbArrowBack,
   TbCircle,
@@ -54,28 +54,21 @@ const ingredientsFetched = [
     unit: "g",
   },
 ] satisfies Ingredient[];
-const instructions =
-  "Prepare the chicken broth by dissolving the two cubes in 1.5 liters of water, and let it simmer.\nSlice the mushrooms and cut the chorizo into quarter slices.\nBrown the chorizo in a pot without adding any fat, until it has reduced well and is nicely colored.\nSet aside the chorizo, keeping the rendered oil in the pot.\nWithout rinsing the rice, add it to the pot. Stir it with a wooden spoon until it turns orange and starts to heat through.\nKeeping the pot over medium heat, cover the rice with simmering broth and let it reduce, stirring occasionally.";
 
 export const MealModalContent = () => {
-  const {
-    activeMeal,
-    isBackLinkVisible,
-    prevModalState,
-    setModalState,
-    setPrevModalState,
-  } = useModalStore();
+  const { activeMeal, isBackLinkVisible, prevModalState, setModalState } =
+    useModalStore();
   const [servings, setServings] = useState(4);
   const [editMode, setEditMode] = useState(false);
   const [ingredients, setIngredients] = useState(ingredientsFetched);
 
   const decrementServings = () => {
-    setServings((prevServings) =>
+    setServings(prevServings =>
       prevServings > 1 ? prevServings - 1 : prevServings,
     );
   };
   const incrementServings = () => {
-    setServings((prevServings) => prevServings + 1);
+    setServings(prevServings => prevServings + 1);
   };
 
   const confirmEdit = () => {
@@ -86,14 +79,14 @@ export const MealModalContent = () => {
   };
 
   const addIngredient = () => {
-    setIngredients((prevIngredients) => [
+    setIngredients(prevIngredients => [
       ...prevIngredients,
       { id: uuid(), name: "", quantity: 0 },
     ]);
   };
   const removeIngredient = (ingredientId: string) => {
-    setIngredients((prevIngredients) =>
-      prevIngredients.filter((ingredient) => ingredient.id !== ingredientId),
+    setIngredients(prevIngredients =>
+      prevIngredients.filter(ingredient => ingredient.id !== ingredientId),
     );
   };
 
@@ -102,6 +95,18 @@ export const MealModalContent = () => {
       setModalState(prevModalState);
     }
   };
+
+  const mealImage = useMemo(
+    () =>
+      activeMeal.empty || !activeMeal.image
+        ? getPlaceHolderImageByType(activeMeal.type)
+        : activeMeal.image,
+    [activeMeal],
+  );
+  const mealRecipe = useMemo(
+    () => (activeMeal.empty || !activeMeal.recipe ? "" : activeMeal.recipe),
+    [activeMeal],
+  );
 
   return (
     <ModalBody className="p-0">
@@ -119,8 +124,8 @@ export const MealModalContent = () => {
       )}
       <Image
         className="rounded-b-none aspect-[3] object-cover"
-        src={activeMeal.image ?? getPlaceHolderImageByType(activeMeal.type)}
-        alt={activeMeal.title ?? "meal image"}
+        src={mealImage}
+        alt={activeMeal.empty ? "meal image" : activeMeal.name}
       />
       <form className="px-10 py-4 grid grid-cols-[1fr_max-content] gap-x-4">
         <div>
@@ -130,13 +135,13 @@ export const MealModalContent = () => {
               variant="flat"
               type="text"
               name="title"
-              defaultValue={activeMeal?.title}
+              defaultValue={activeMeal.empty ? "" : activeMeal.name}
               placeholder="Meal title"
               size="lg"
             />
           ) : (
             <p className="text-xl font-semibold">
-              {activeMeal.title ?? `New ${activeMeal.type}`}
+              {activeMeal.empty ? `New ${activeMeal.type}` : activeMeal.name}
             </p>
           )}
           <p className="text-lg font-medium mt-6 mb-4">Ingredients</p>
@@ -146,7 +151,7 @@ export const MealModalContent = () => {
               <span>Unit</span>
               <span>Ingredient</span>
               <span> </span>
-              {ingredients.map((ingredient) => (
+              {ingredients.map(ingredient => (
                 <IngredientInput
                   key={ingredient.id}
                   ingredient={ingredient}
@@ -166,7 +171,7 @@ export const MealModalContent = () => {
             </div>
           ) : (
             <div className="flex flex-col gap-y-3">
-              {ingredients.map((ingredient) => (
+              {ingredients.map(ingredient => (
                 <IngredientItem
                   key={ingredient.id}
                   ingredient={ingredient}
@@ -229,7 +234,7 @@ export const MealModalContent = () => {
               label="Total time"
               labelPlacement="outside-left"
               endContent={<span className="text-small">min</span>}
-              defaultValue={activeMeal.time?.toFixed() ?? "0"}
+              defaultValue={activeMeal.empty ? "0" : activeMeal.time.toFixed()}
               type="number"
               name="time"
               classNames={{
@@ -240,17 +245,17 @@ export const MealModalContent = () => {
           ) : (
             <div>
               <span className="font-medium">Total time : </span>
-              <span>{activeMeal.time ?? 0}min</span>
+              <span>{activeMeal.empty ? 0 : activeMeal.time}min</span>
             </div>
           )}
         </div>
         <div className="col-span-2">
           <p className="text-lg font-medium mt-6 mb-4">Instructions</p>
           {editMode ? (
-            <Textarea defaultValue={instructions} />
+            <Textarea defaultValue={mealRecipe} />
           ) : (
             <ul className="list-disc list-inside space-y-4">
-              {instructions.split("\n").map((instruction) => (
+              {mealRecipe.split("\n").map(instruction => (
                 <li key={instruction}>{instruction}</li>
               ))}
             </ul>
@@ -310,7 +315,7 @@ const IngredientInput = ({
         name="unit"
         defaultSelectedKeys={ingredient.unit}
       >
-        {units.map((unit) => (
+        {units.map(unit => (
           <SelectItem key={unit}>{unit}</SelectItem>
         ))}
       </Select>

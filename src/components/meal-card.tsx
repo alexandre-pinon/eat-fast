@@ -1,23 +1,14 @@
-import type { MealType } from "@/types";
+import type { NonEmptyMeal } from "@/entities/meal";
 import { getPlaceHolderImageByType } from "@/utils";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 import { TbCheck } from "react-icons/tb";
 
 type MealCardProps = {
-  type: MealType;
-  title: string;
-  time: number;
-  image?: string;
+  meal: NonEmptyMeal;
   isDragOverlay?: boolean;
 };
 
-export const MealCard = ({
-  type,
-  title,
-  time,
-  image,
-  isDragOverlay,
-}: MealCardProps) => {
+export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
   return (
     <Card
       className={`bg-primary text-primary-foreground text-start ${isDragOverlay ? "scale-105" : ""}`}
@@ -25,14 +16,14 @@ export const MealCard = ({
       <CardBody className="relative p-0">
         <Image
           className="rounded-b-none aspect-video object-cover"
-          src={image ?? getPlaceHolderImageByType(type)}
-          alt={title}
+          src={meal.image ?? getPlaceHolderImageByType(meal.type)}
+          alt={meal.name}
         />
       </CardBody>
       <CardFooter className="grid grid-cols-[1fr_min-content] space-x-2">
-        <span className="line-clamp-2 self-start">{title}</span>
+        <span className="line-clamp-2 self-start">{meal.name}</span>
         <div className="flex flex-col items-end gap-y-1">
-          <span className="font-light text-small">~{time}min</span>
+          <span className="font-light text-small">~{meal.time}min</span>
           <Button
             className="w-6 h-6 min-w-6"
             isIconOnly
