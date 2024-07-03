@@ -1,5 +1,5 @@
-import { mealType, weekDay } from "@/db/schema";
-import type { WeekDay } from "@/types/weekday";
+import { mealTypes } from "@/types/meal-type";
+import { type WeekDay, weekDays } from "@/types/weekday";
 import { parseEntity } from "@/valibot";
 import * as v from "valibot";
 
@@ -7,8 +7,8 @@ export const MealSchema = v.object({
   id: v.pipe(v.string(), v.uuid()),
   userId: v.pipe(v.string(), v.uuid()),
   name: v.pipe(v.string(), v.nonEmpty()),
-  type: v.picklist(mealType.enumValues),
-  weekDay: v.picklist(weekDay.enumValues),
+  type: v.picklist(mealTypes),
+  weekDay: v.picklist(weekDays),
   time: v.number(),
   image: v.nullable(v.string()),
   recipe: v.nullable(v.string()),

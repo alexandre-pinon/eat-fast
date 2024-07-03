@@ -1,5 +1,13 @@
+import type { Ingredient } from "@/entities/ingredient";
 import { useModalStore } from "@/hooks/modal-store";
-import { type Ingredient, units } from "@/types";
+import {
+  type MealModalMode,
+  isAdd,
+  isEdit,
+  isNormal,
+} from "@/types/meal-modal-state";
+import { isHistory } from "@/types/modal-state";
+import { quantityUnits } from "@/types/quantity-unit";
 import { getPlaceHolderImageByType } from "@/utils";
 import {
   Button,
@@ -11,7 +19,8 @@ import {
   SelectItem,
   Textarea,
 } from "@nextui-org/react";
-import { useMemo, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect, useMemo, useState } from "react";
 import {
   TbArrowBack,
   TbCircle,
@@ -23,44 +32,41 @@ import {
   TbPlus,
   TbTrash,
 } from "react-icons/tb";
+import { match } from "ts-pattern";
 import { v4 as uuid } from "uuid";
 
-const ingredientsFetched = [
-  {
-    id: "0001",
-    name: "chicken stock cubes",
-    quantity: 0.5,
-  },
-  {
-    id: "0002",
-    name: "u-shaped chorizo",
-    quantity: 0.125,
-  },
-  {
-    id: "0003",
-    name: "rice for risotto",
-    quantity: 100,
-    unit: "g",
-  },
-  {
-    id: "0004",
-    name: "paris muschrooms",
-    quantity: 2.5,
-  },
-  {
-    id: "0005",
-    name: "parmesan cheese",
-    quantity: 25,
-    unit: "g",
-  },
-] satisfies Ingredient[];
+const getMealIngredients = async (mealId: string): Promise<Ingredient[]> => {
+  try {
+    const res = await fetch(`/api/meals/${mealId}/ingredients`);
+    const json = await res.json();
+    if (!res.ok) {
+      console.error({ status: res.status, json });
+      return [];
+    }
+    console.log(json);
+    return json;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
 
 export const MealModalContent = () => {
+  const session = useSession();
   const { activeMeal, isBackLinkVisible, prevModalState, setModalState } =
     useModalStore();
+
   const [servings, setServings] = useState(4);
-  const [editMode, setEditMode] = useState(false);
-  const [ingredients, setIngredients] = useState(ingredientsFetched);
+  const [mode, setMode] = useState<MealModalMode>(
+    activeMeal.empty || isHistory(prevModalState) ? "add" : "normal",
+  );
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+
+  useEffect(() => {
+    if (!activeMeal.empty) {
+      getMealIngredients(activeMeal.id).then(setIngredients);
+    }
+  }, [activeMeal]);
 
   const decrementServings = () => {
     setServings(prevServings =>
@@ -71,22 +77,19 @@ export const MealModalContent = () => {
     setServings(prevServings => prevServings + 1);
   };
 
-  const confirmEdit = () => {
-    setEditMode(false);
-  };
-  const cancelEdit = () => {
-    setEditMode(false);
-  };
-
   const addIngredient = () => {
-    setIngredients(prevIngredients => [
-      ...prevIngredients,
-      { id: uuid(), name: "", quantity: 0 },
-    ]);
+    match(session)
+      .with({ status: "authenticated" }, ({ data }) => {
+        setIngredients([
+          ...ingredients,
+          { id: uuid(), userId: data.sub, name: "", quantity: 0, unit: null },
+        ]);
+      })
+      .otherwise(() => {});
   };
   const removeIngredient = (ingredientId: string) => {
-    setIngredients(prevIngredients =>
-      prevIngredients.filter(ingredient => ingredient.id !== ingredientId),
+    setIngredients(
+      ingredients.filter(ingredient => ingredient.id !== ingredientId),
     );
   };
 
@@ -129,7 +132,11 @@ export const MealModalContent = () => {
       />
       <form className="px-10 py-4 grid grid-cols-[1fr_max-content] gap-x-4">
         <div>
-          {editMode ? (
+          {isNormal(mode) ? (
+            <p className="text-xl font-semibold">
+              {activeMeal.empty ? `New ${activeMeal.type}` : activeMeal.name}
+            </p>
+          ) : (
             <Input
               color="default"
               variant="flat"
@@ -139,13 +146,19 @@ export const MealModalContent = () => {
               placeholder="Meal title"
               size="lg"
             />
-          ) : (
-            <p className="text-xl font-semibold">
-              {activeMeal.empty ? `New ${activeMeal.type}` : activeMeal.name}
-            </p>
           )}
           <p className="text-lg font-medium mt-6 mb-4">Ingredients</p>
-          {editMode ? (
+          {isNormal(mode) ? (
+            <div className="flex flex-col gap-y-3">
+              {ingredients.map(ingredient => (
+                <IngredientItem
+                  key={ingredient.id}
+                  ingredient={ingredient}
+                  servings={servings}
+                />
+              ))}
+            </div>
+          ) : (
             <div className="grid grid-cols-[1fr_1fr_2fr_min-content] gap-x-4 gap-y-2 justify-items-center">
               <span>Quantity</span>
               <span>Unit</span>
@@ -169,48 +182,42 @@ export const MealModalContent = () => {
                 Add ingredient
               </Button>
             </div>
-          ) : (
-            <div className="flex flex-col gap-y-3">
-              {ingredients.map(ingredient => (
-                <IngredientItem
-                  key={ingredient.id}
-                  ingredient={ingredient}
-                  servings={servings}
-                />
-              ))}
-            </div>
           )}
         </div>
         <div className="flex flex-col items-end gap-y-3">
-          {editMode ? (
-            <div className="inline-flex">
+          {match(mode)
+            .with("normal", () => (
               <Button
                 isIconOnly
-                color="success"
+                color="primary"
                 variant="light"
-                onPress={confirmEdit}
+                onPress={() => setMode("edit")}
               >
-                <TbCircleCheck size={32} />
+                <TbEditCircle size={32} />
               </Button>
-              <Button
-                isIconOnly
-                color="danger"
-                variant="light"
-                onPress={cancelEdit}
-              >
-                <TbCircleX size={32} />
-              </Button>
-            </div>
-          ) : (
-            <Button
-              isIconOnly
-              color="primary"
-              variant="light"
-              onPress={() => setEditMode(true)}
-            >
-              <TbEditCircle size={32} />
-            </Button>
-          )}
+            ))
+            .with("edit", () => (
+              <div className="inline-flex">
+                <Button
+                  isIconOnly
+                  color="success"
+                  variant="light"
+                  onPress={() => setMode("normal")}
+                >
+                  <TbCircleCheck size={32} />
+                </Button>
+                <Button
+                  isIconOnly
+                  color="danger"
+                  variant="light"
+                  onPress={() => setMode("normal")}
+                >
+                  <TbCircleX size={32} />
+                </Button>
+              </div>
+            ))
+            .with("add", () => <></>)
+            .exhaustive()}
           <ButtonGroup>
             <Button
               isIconOnly
@@ -227,7 +234,12 @@ export const MealModalContent = () => {
               <TbPlus />
             </Button>
           </ButtonGroup>
-          {editMode ? (
+          {isNormal(mode) ? (
+            <div>
+              <span className="font-medium">Total time : </span>
+              <span>{activeMeal.empty ? 0 : activeMeal.time}min</span>
+            </div>
+          ) : (
             <Input
               color="default"
               variant="flat"
@@ -242,29 +254,38 @@ export const MealModalContent = () => {
                 label: "font-medium",
               }}
             />
-          ) : (
-            <div>
-              <span className="font-medium">Total time : </span>
-              <span>{activeMeal.empty ? 0 : activeMeal.time}min</span>
-            </div>
           )}
         </div>
         <div className="col-span-2">
           <p className="text-lg font-medium mt-6 mb-4">Instructions</p>
-          {editMode ? (
-            <Textarea defaultValue={mealRecipe} />
-          ) : (
+          {isNormal(mode) ? (
             <ul className="list-disc list-inside space-y-4">
               {mealRecipe.split("\n").map(instruction => (
                 <li key={instruction}>{instruction}</li>
               ))}
             </ul>
+          ) : (
+            <Textarea defaultValue={mealRecipe} />
           )}
         </div>
-        <div className="col-span-full justify-self-end mt-10">
-          <Button color="danger" variant="ghost" isIconOnly>
-            <TbTrash size={20} />
-          </Button>
+        <div className="col-span-full mt-10">
+          <div className="grid grid-cols-3">
+            <div />
+            <div className="justify-self-center">
+              {isAdd(mode) && (
+                <Button color="primary" variant="flat" radius="lg">
+                  Add meal
+                </Button>
+              )}
+            </div>
+            <div className="justify-self-end">
+              {isEdit(mode) && (
+                <Button color="danger" variant="ghost" radius="lg" isIconOnly>
+                  <TbTrash size={20} />
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </form>
     </ModalBody>
@@ -313,10 +334,10 @@ const IngredientInput = ({
         color="default"
         variant="flat"
         name="unit"
-        defaultSelectedKeys={ingredient.unit}
+        defaultSelectedKeys={ingredient.unit ?? undefined}
       >
-        {units.map(unit => (
-          <SelectItem key={unit}>{unit}</SelectItem>
+        {quantityUnits.map(quantityUnit => (
+          <SelectItem key={quantityUnit}>{quantityUnit}</SelectItem>
         ))}
       </Select>
       <Input

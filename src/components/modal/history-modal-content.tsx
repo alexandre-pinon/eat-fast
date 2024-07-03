@@ -46,6 +46,7 @@ export const HistoryModalContent = () => {
     setPrevModalState,
     showBackLink,
     isBackLinkVisible,
+    lastEmptyMeal,
   } = useModalStore();
 
   const filteredMeals = useMemo(
@@ -61,7 +62,7 @@ export const HistoryModalContent = () => {
   const onRowAction = (key: Key) => {
     const rowMeal = filteredMeals.find(meal => meal.id === key);
     if (rowMeal) {
-      setActiveMeal({ ...rowMeal, empty: false });
+      setActiveMeal({ ...rowMeal, empty: false, type: lastEmptyMeal.type });
       setPrevModalState("history");
       showBackLink();
       setModalState("meal");

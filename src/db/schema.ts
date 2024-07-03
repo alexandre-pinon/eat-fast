@@ -1,3 +1,5 @@
+import { mealTypes } from "@/types/meal-type";
+import { quantityUnits } from "@/types/quantity-unit";
 import { weekDays } from "@/types/weekday";
 import { sql } from "drizzle-orm";
 import {
@@ -12,17 +14,9 @@ import {
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
-export const mealType = pgEnum("meal_type", ["breakfast", "lunch", "diner"]);
+export const mealType = pgEnum("meal_type", mealTypes);
 export const weekDay = pgEnum("week_day", weekDays);
-export const quantityUnit = pgEnum("quantity_unit", [
-  "g",
-  "kg",
-  "ml",
-  "cl",
-  "l",
-  "tsp",
-  "tbsp",
-]);
+export const quantityUnit = pgEnum("quantity_unit", quantityUnits);
 
 export const users = pgTable("user", {
   id: uuid("id")

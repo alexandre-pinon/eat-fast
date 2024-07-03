@@ -1,5 +1,5 @@
 import { useModalStore } from "@/hooks/modal-store";
-import type { ModalState } from "@/types";
+import type { ModalState } from "@/types/modal-state";
 import { Button, Modal, ModalBody, ModalContent } from "@nextui-org/react";
 import { TbCirclePlus, TbHistory } from "react-icons/tb";
 import { match } from "ts-pattern";
@@ -31,11 +31,18 @@ const renderModalContent = (modalState: ModalState) => {
 };
 
 const MenuModalContent = () => {
-  const { setModalState, showBackLink, setPrevModalState } = useModalStore();
+  const {
+    setModalState,
+    showBackLink,
+    setPrevModalState,
+    lastEmptyMeal,
+    setActiveMeal,
+  } = useModalStore();
 
   const onPressNewMeal = () => {
     setPrevModalState("menu");
     showBackLink();
+    setActiveMeal(lastEmptyMeal);
     setModalState("meal");
   };
 

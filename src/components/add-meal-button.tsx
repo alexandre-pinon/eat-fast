@@ -4,10 +4,10 @@ import { Button } from "@nextui-org/react";
 import { TbPlus } from "react-icons/tb";
 
 export const AddMealButton = ({ meal }: { meal: EmptyMeal }) => {
-  const { openModal, setModalState, setActiveMeal } = useModalStore();
+  const { openModal, setModalState, setLastEmptyMeal } = useModalStore();
 
   const onPressAddMeal = () => {
-    setActiveMeal(meal);
+    setLastEmptyMeal(meal);
     setModalState("menu");
     openModal();
   };

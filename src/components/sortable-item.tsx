@@ -21,12 +21,18 @@ export const SortableItem = ({
     transition,
     isDragging,
   } = useSortable({ id: meal.id });
-  const { openModal, setModalState, setActiveMeal, hideBackLink } =
-    useModalStore();
+  const {
+    openModal,
+    setPrevModalState,
+    setModalState,
+    setActiveMeal,
+    hideBackLink,
+  } = useModalStore();
 
   const handleOnClick = () => {
     setActiveMeal(meal);
     hideBackLink();
+    setPrevModalState("meal");
     setModalState("meal");
     openModal();
   };

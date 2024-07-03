@@ -1,4 +1,7 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { option, taskEither } from "fp-ts";
+import type { TaskEither } from "fp-ts/TaskEither";
+import { pipe } from "fp-ts/function";
 import type {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -9,6 +12,10 @@ import type { Adapter } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
 import { db } from "./db/client";
 import { accounts, sessions, users, verificationTokens } from "./db/schema";
+import { TechnicalError } from "./errors/technial.error";
+import { UnaunthenticatdError } from "./errors/unauthenticated.error";
+import { logDebug } from "./logger";
+import { tryCatchTechnical } from "./utils";
 
 const config = {
   adapter: DrizzleAdapter(db, {
@@ -50,4 +57,21 @@ export const auth = (
     | []
 ) => {
   return getServerSession(...args, config);
+};
+
+export const getUserIdFromServerSession = (): TaskEither<
+  UnaunthenticatdError,
+  string
+> => {
+  return pipe(
+    tryCatchTechnical(() => auth(), "Could not get server session"),
+    taskEither.tapIO(logDebug),
+    taskEither.map(session => option.fromNullable(session?.sub)),
+    taskEither.flatMap(
+      taskEither.fromOption(
+        () => new TechnicalError("No user id found in session"),
+      ),
+    ),
+    taskEither.mapError(error => new UnaunthenticatdError({ cause: error })),
+  );
 };

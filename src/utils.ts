@@ -2,7 +2,8 @@ import { either, taskEither } from "fp-ts";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { match } from "ts-pattern";
 import { TechnicalError } from "./errors/technial.error";
-import type { Jsonable, MealType } from "./types";
+import type { Jsonable } from "./types";
+import type { MealType } from "./types/meal-type";
 
 export const getPlaceHolderImageByType = (type: MealType): string =>
   match(type)

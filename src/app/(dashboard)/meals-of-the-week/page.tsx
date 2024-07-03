@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { auth } from "@/auth";
+import { getUserIdFromServerSession } from "@/auth";
 import { MealsOfTheWeek } from "@/components/meals-of-the-week";
 import { db } from "@/db/client";
 import { mealType, meals, weekDay } from "@/db/schema";
@@ -9,8 +9,8 @@ import {
   type WeekMealData,
   parseMeal,
 } from "@/entities/meal";
-import { TechnicalError } from "@/errors/technial.error";
-import { logDebug, logError } from "@/logger";
+import type { TechnicalError } from "@/errors/technial.error";
+import { logError } from "@/logger";
 import { toPromise, tryCatchTechnical } from "@/utils";
 import { ScrollShadow, Spacer } from "@nextui-org/react";
 import { eq } from "drizzle-orm";
@@ -70,14 +70,7 @@ const groupMealsByWeekDay = (userMeals: Meal[]): WeekMealData =>
 
 const getWeekMeals = (): Promise<WeekMealData> => {
   return pipe(
-    tryCatchTechnical(() => auth(), "Could not get server session"),
-    taskEither.tapIO(logDebug),
-    taskEither.map(session => option.fromNullable(session?.sub)),
-    taskEither.flatMap(
-      taskEither.fromOption(
-        () => new TechnicalError("No user id found in session"),
-      ),
-    ),
+    getUserIdFromServerSession(),
     taskEither.flatMap(getMealsByUserId),
     taskEither.map(groupMealsByWeekDay),
     taskEither.orElseFirstIOK(logError),
