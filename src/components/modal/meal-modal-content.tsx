@@ -150,13 +150,17 @@ export const MealModalContent = () => {
           <p className="text-lg font-medium mt-6 mb-4">Ingredients</p>
           {isNormal(mode) ? (
             <div className="flex flex-col gap-y-3">
-              {ingredients.map(ingredient => (
-                <IngredientItem
-                  key={ingredient.id}
-                  ingredient={ingredient}
-                  servings={servings}
-                />
-              ))}
+              {ingredients.length > 0 ? (
+                ingredients.map(ingredient => (
+                  <IngredientItem
+                    key={ingredient.id}
+                    ingredient={ingredient}
+                    servings={servings}
+                  />
+                ))
+              ) : (
+                <span className="italic opacity-50">No ingredients added</span>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-[1fr_1fr_2fr_min-content] gap-x-4 gap-y-2 justify-items-center">
@@ -259,11 +263,15 @@ export const MealModalContent = () => {
         <div className="col-span-2">
           <p className="text-lg font-medium mt-6 mb-4">Instructions</p>
           {isNormal(mode) ? (
-            <ul className="list-disc list-inside space-y-4">
-              {mealRecipe.split("\n").map(instruction => (
-                <li key={instruction}>{instruction}</li>
-              ))}
-            </ul>
+            mealRecipe.length > 0 ? (
+              <ul className="list-disc list-inside space-y-4">
+                {mealRecipe.split("\n").map(instruction => (
+                  <li key={instruction}>{instruction}</li>
+                ))}
+              </ul>
+            ) : (
+              <span className="italic opacity-50">No instructions added</span>
+            )
           ) : (
             <Textarea defaultValue={mealRecipe} />
           )}
