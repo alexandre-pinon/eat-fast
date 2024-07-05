@@ -32,7 +32,6 @@ const getMealIngredients = async (mealId: string): Promise<Ingredient[]> => {
       console.error({ status: res.status, json });
       return [];
     }
-    console.log(json);
     return json;
   } catch (error) {
     console.error(error);
@@ -54,6 +53,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
       userId,
       type: activeMeal.type,
       weekDay: activeMeal.weekDay,
+      servings,
     }),
     { mealUpserted: false },
   );
@@ -69,7 +69,14 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
     }
   }, [activeMeal]);
   useEffect(() => {
-    console.log({ formState });
+    if (!formState.mealUpserted && formState.error) {
+      console.error(formState.error);
+      return;
+    }
+
+    if (formState.mealUpserted) {
+      setMode("normal");
+    }
   }, [formState]);
 
   const decrementServings = () => {
@@ -169,12 +176,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
           ))
           .with("edit", () => (
             <div className="inline-flex">
-              <Button
-                isIconOnly
-                color="success"
-                variant="light"
-                onPress={() => setMode("normal")}
-              >
+              <Button isIconOnly color="success" variant="light" type="submit">
                 <TbCircleCheck size={32} />
               </Button>
               <Button

@@ -16,12 +16,13 @@ import { logDebug, logError } from "@/logger";
 import type { MealType } from "@/types/meal-type";
 import type { WeekDay } from "@/types/weekday";
 import {
+  revalidatePathIO,
   toPlainObjectPromise,
   toPromise,
   tryCatchTechnical,
   validateLengths,
 } from "@/utils";
-import { and, eq, notInArray } from "drizzle-orm";
+import { and, eq, notInArray, sql } from "drizzle-orm";
 import { array, boolean, either, readonlyArray, taskEither } from "fp-ts";
 import type { Either } from "fp-ts/Either";
 import type { TaskEither } from "fp-ts/TaskEither";
@@ -32,6 +33,7 @@ type UpsertMealActionData = {
   userId: string;
   type: MealType;
   weekDay: WeekDay;
+  servings: number;
 };
 type UpsertMealFormState =
   | { mealUpserted: true }
@@ -46,8 +48,9 @@ export const upsertMealAction = async (
     formData,
     parseFormData(additionalData),
     taskEither.fromEither,
-    taskEither.flatMap(upsertMealWithIngredients),
+    taskEither.flatMap(upsertMealWithIngredients(additionalData.servings)),
     taskEither.orElseFirstIOK(logError),
+    taskEither.tapIO(() => revalidatePathIO("/meals-of-the-week")),
     taskEither.fold(
       error =>
         taskEither.right<never, UpsertMealFormState>({
@@ -62,59 +65,67 @@ export const upsertMealAction = async (
 };
 
 const upsertMealWithIngredients = (
+  servings: number,
+): ((
   input: CreateMealWithIngredientsInput,
-): TaskEither<TechnicalError, void> => {
-  return tryCatchTechnical(
-    () =>
-      db.transaction(async tx =>
-        pipe(
-          input.meal,
-          upsertMeal(tx),
-          taskEither.apSecond(
-            pipe(
-              taskEither.of(input.ingredients),
-              taskEither.flatMap(
-                taskEither.traverseSeqArray(upsertIngredient(tx)),
-              ),
-              taskEither.map(readonlyArray.map(({ upsertedId }) => upsertedId)),
-              taskEither.map(readonlyArray.toArray),
-            ),
-          ),
-          taskEither.flatMap(ingredientIds =>
-            pipe(
-              array.isEmpty(ingredientIds),
-              boolean.fold(
-                () =>
-                  deleteMealPreviousIngredients(tx)(
-                    input.meal.id,
-                    ingredientIds,
-                  ),
-                () => taskEither.right(constVoid()),
+) => TaskEither<TechnicalError, void>) => {
+  return input =>
+    tryCatchTechnical(
+      () =>
+        db.transaction(async tx =>
+          pipe(
+            input.meal,
+            upsertMeal(tx),
+            taskEither.apSecond(
+              pipe(
+                taskEither.of(input.ingredients),
+                taskEither.flatMap(
+                  taskEither.traverseSeqArray(upsertIngredient(tx)),
+                ),
+                taskEither.map(
+                  readonlyArray.map(({ upsertedId }) => upsertedId),
+                ),
+                taskEither.map(readonlyArray.toArray),
               ),
             ),
-          ),
-          taskEither.apSecond(
-            pipe(
-              input.ingredients,
-              array.map(ingredient => ({
-                mealId: input.meal.id,
-                ingredientId: ingredient.id,
-                quantity: ingredient.quantity,
-                unit: ingredient.unit,
-              })),
-              taskEither.of,
-              taskEither.flatMap(
-                taskEither.traverseSeqArray(upsertMealIngredient(tx)),
+            taskEither.tap(ingredientIds =>
+              pipe(
+                array.isEmpty(ingredientIds),
+                boolean.fold(
+                  () =>
+                    deleteMealPreviousIngredients(tx)(
+                      input.meal.id,
+                      ingredientIds,
+                    ),
+                  () => taskEither.right(constVoid()),
+                ),
               ),
-              taskEither.map(constVoid),
             ),
+            taskEither.flatMap(ingredientIds =>
+              pipe(
+                array.zipWith(
+                  input.ingredients,
+                  ingredientIds,
+                  (ingredient, upsertedId) => ({
+                    mealId: input.meal.id,
+                    ingredientId: upsertedId,
+                    quantity: (ingredient.quantity / servings).toString(),
+                    unit: ingredient.unit,
+                  }),
+                ),
+                taskEither.of,
+                taskEither.flatMap(
+                  taskEither.traverseSeqArray(upsertMealIngredient(tx)),
+                ),
+                taskEither.map(constVoid),
+              ),
+            ),
+            toPromise,
           ),
-          toPromise,
         ),
-      ),
-    "Error while executing transaction",
-    { input },
-  );
+      "Error while executing transaction",
+      { input },
+    );
 };
 
 const upsertMeal =
@@ -156,10 +167,11 @@ const upsertIngredient =
             .values({
               id: ingredient.id,
               userId: ingredient.userId,
-              name: ingredient.name,
+              name: ingredient.name.toLowerCase(),
             })
-            .onConflictDoNothing({
+            .onConflictDoUpdate({
               target: [ingredients.userId, ingredients.name],
+              set: { id: sql`${ingredients.id}` },
             })
             .returning({ upsertedId: ingredients.id }),
         `Error while upserting ingredient #${ingredient.id}`,

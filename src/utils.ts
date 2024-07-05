@@ -1,7 +1,9 @@
 import { array, either, taskEither } from "fp-ts";
 import type { Either } from "fp-ts/Either";
+import type { IO } from "fp-ts/IO";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { constVoid, flow, pipe } from "fp-ts/function";
+import { revalidatePath } from "next/cache";
 import { match } from "ts-pattern";
 import { TechnicalError } from "./errors/technial.error";
 import { ValidationError } from "./errors/validation.error";
@@ -60,11 +62,13 @@ export const tryCatchTechnical = <A>(
 ): TaskEither<TechnicalError, A> => {
   return taskEither.tryCatch(
     () => fn(),
-    error =>
-      new TechnicalError(errorMessage, {
+    error => {
+      console.error(error);
+      return new TechnicalError(errorMessage, {
         cause: ensureError(error),
         context,
-      }),
+      });
+    },
   );
 };
 
@@ -85,3 +89,8 @@ export const validateLengths = <T extends Jsonable>(
     either.map(constVoid),
   );
 };
+
+export const revalidatePathIO =
+  (path: string): IO<void> =>
+  () =>
+    revalidatePath(path);

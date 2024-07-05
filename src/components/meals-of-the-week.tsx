@@ -14,7 +14,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { arraySwap } from "@dnd-kit/sortable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DayOfTheWeekCard, dispayDndItem } from "./day-of-the-week-card";
 import { MealModal } from "./modal/meal-modal";
 
@@ -37,6 +37,10 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
       },
     }),
   );
+
+  useEffect(() => {
+    setMealsOfTheWeek(data);
+  }, [data]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const activeMeal = Object.values(mealsOfTheWeek)

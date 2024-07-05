@@ -1,12 +1,18 @@
 import { quantityUnits } from "@/types/quantity-unit";
-import { NonEmptyStringSchema, UUIDSchema, parseEntity } from "@/valibot";
+import {
+  NonEmptyStringSchema,
+  StringToNumberSchema,
+  UUIDSchema,
+  parseEntity,
+  parseEntityAsync,
+} from "@/valibot";
 import * as v from "valibot";
 
 export const IngredientSchema = v.object({
   id: UUIDSchema,
   userId: UUIDSchema,
   name: NonEmptyStringSchema,
-  quantity: v.number(),
+  quantity: StringToNumberSchema("quantity"),
   unit: v.nullable(v.picklist(quantityUnits)),
 });
 export type Ingredient = v.InferOutput<typeof IngredientSchema>;
@@ -16,11 +22,6 @@ export const CreateIngredientSchema = v.object({
   name: v.pipe(
     v.string("Ingredient name must be a string"),
     v.nonEmpty("Ingredient name is required"),
-  ),
-  quantity: v.pipe(
-    v.string(),
-    v.transform(Number),
-    v.number("Quantity is not a valid number"),
   ),
   unit: v.pipe(
     v.string(),
@@ -32,4 +33,5 @@ export type CreateIngredientInput = v.InferOutput<
   typeof CreateIngredientSchema
 >;
 
+export const parseIngredientAsync = parseEntityAsync(IngredientSchema);
 export const parseCreateIngredientInput = parseEntity(CreateIngredientSchema);

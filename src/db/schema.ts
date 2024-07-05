@@ -2,10 +2,9 @@ import { randomUUID } from "node:crypto";
 import { mealTypes } from "@/types/meal-type";
 import { quantityUnits } from "@/types/quantity-unit";
 import { weekDays } from "@/types/weekday";
-import { type SQL, sql } from "drizzle-orm";
 import {
-  type AnyPgColumn,
   boolean,
+  decimal,
   integer,
   pgEnum,
   pgTable,
@@ -151,7 +150,7 @@ export const ingredients = pgTable(
   table => ({
     userIdNameUniqueIdx: uniqueIndex("user_id_name_unique_idx").on(
       table.userId,
-      lower(table.name),
+      table.name,
     ),
   }),
 );
@@ -165,7 +164,7 @@ export const mealsToIngredients = pgTable(
     ingredientId: uuid("ingredient_id")
       .notNull()
       .references(() => ingredients.id, { onDelete: "cascade" }),
-    quantity: integer("quantity").notNull().default(0),
+    quantity: decimal("quantity").notNull().default("0"),
     unit: quantityUnit("unit"),
   },
   table => ({
@@ -175,5 +174,4 @@ export const mealsToIngredients = pgTable(
   }),
 );
 
-export const lower = (column: AnyPgColumn): SQL => sql`lower(${column})`;
 export const now = () => new Date();

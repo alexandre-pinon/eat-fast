@@ -2,6 +2,7 @@ import { mealTypes } from "@/types/meal-type";
 import { type WeekDay, weekDays } from "@/types/weekday";
 import {
   NonEmptyStringSchema,
+  StringToNumberSchema,
   UUIDSchema,
   parseEntity,
   parseEntityAsync,
@@ -27,11 +28,7 @@ export const CreateMealSchema = v.object({
     v.string("Meal name must be a string"),
     v.nonEmpty("Meal name is required"),
   ),
-  time: v.pipe(
-    v.string(),
-    v.transform(Number),
-    v.number("Time is not a valid number"),
-  ),
+  time: StringToNumberSchema("time"),
   recipe: v.pipe(
     v.string(),
     v.transform(recipe => (recipe.length === 0 ? null : recipe)),

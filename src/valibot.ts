@@ -32,3 +32,9 @@ export const parseEntityAsync = <
 
 export const UUIDSchema = v.pipe(v.string(), v.uuid());
 export const NonEmptyStringSchema = v.pipe(v.string(), v.nonEmpty());
+export const StringToNumberSchema = (field?: string) =>
+  v.pipe(
+    v.string(),
+    v.transform(Number),
+    v.number(`${field ?? "field"} is not a valid number`),
+  );
