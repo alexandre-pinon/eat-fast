@@ -25,6 +25,7 @@ export const useModalStore = create<ModalStore>(set => {
     id: uuid(),
     empty: true,
     type: "lunch",
+    weekDay: "monday",
   } satisfies EmptyMeal;
 
   return {

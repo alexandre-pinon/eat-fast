@@ -1,5 +1,7 @@
 import type { NextResponse } from "next/server";
 
+// biome-ignore lint/suspicious/noExplicitAny:
+export type FirstParameter<T extends (...args: any) => any> = Parameters<T>[0];
 export type Nullable<T> = T | null;
 
 export type Jsonable =

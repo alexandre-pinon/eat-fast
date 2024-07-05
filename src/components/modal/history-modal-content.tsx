@@ -62,7 +62,12 @@ export const HistoryModalContent = () => {
   const onRowAction = (key: Key) => {
     const rowMeal = filteredMeals.find(meal => meal.id === key);
     if (rowMeal) {
-      setActiveMeal({ ...rowMeal, empty: false, type: lastEmptyMeal.type });
+      setActiveMeal({
+        ...rowMeal,
+        empty: false,
+        type: lastEmptyMeal.type,
+        weekDay: lastEmptyMeal.weekDay,
+      });
       setPrevModalState("history");
       showBackLink();
       setModalState("meal");

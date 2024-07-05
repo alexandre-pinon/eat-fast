@@ -7,10 +7,11 @@ import {
   type Meal,
   type WeekMeal,
   type WeekMealData,
-  parseMeal,
+  parseMealAsync,
 } from "@/entities/meal";
 import type { TechnicalError } from "@/errors/technial.error";
 import { logError } from "@/logger";
+import type { WeekDay } from "@/types/weekday";
 import { toPromise, tryCatchTechnical } from "@/utils";
 import { ScrollShadow, Spacer } from "@nextui-org/react";
 import { eq } from "drizzle-orm";
@@ -27,41 +28,44 @@ const getMealsByUserId = (
       () => db.select().from(meals).where(eq(meals.userId, userId)),
       "Error while finding meals by user id",
     ),
-    taskEither.flatMap(taskEither.traverseArray(parseMeal)),
+    taskEither.flatMap(taskEither.traverseArray(parseMealAsync)),
     taskEither.map(readonlyArray.toArray),
   );
 };
 
-const generateMissingMealsByDay = (userMealsByDay: Meal[]): WeekMeal[] => {
-  return pipe(
-    mealType.enumValues,
-    array.map(type =>
-      pipe(
-        userMealsByDay,
-        array.findFirst(meal => meal.type === type),
-        option.map(meal => ({ ...meal, empty: false })),
-        option.getOrElse<WeekMeal>(() => ({
-          id: randomUUID(),
-          empty: true,
-          type,
-        })),
+const generateMissingMealsByDay =
+  (weekDay: WeekDay) =>
+  (userMealsByDay: Meal[]): WeekMeal[] => {
+    return pipe(
+      mealType.enumValues,
+      array.map(type =>
+        pipe(
+          userMealsByDay,
+          array.findFirst(meal => meal.type === type),
+          option.map(meal => ({ ...meal, empty: false })),
+          option.getOrElse<WeekMeal>(() => ({
+            id: randomUUID(),
+            empty: true,
+            type,
+            weekDay,
+          })),
+        ),
       ),
-    ),
-  );
-};
+    );
+  };
 
 const groupMealsByWeekDay = (userMeals: Meal[]): WeekMealData =>
   pipe(
     weekDay.enumValues,
-    array.reduce({} as WeekMealData, (acc, curr) =>
+    array.reduce({} as WeekMealData, (accWeekDay, currWeekDay) =>
       pipe(
         userMeals,
-        array.filter(meal => meal.weekDay === curr),
-        generateMissingMealsByDay,
+        array.filter(meal => meal.weekDay === currWeekDay),
+        generateMissingMealsByDay(currWeekDay),
         mealsByDay =>
           pipe(
-            acc,
-            record.upsertAt(curr, mealsByDay),
+            accWeekDay,
+            record.upsertAt(currWeekDay, mealsByDay),
             meals => meals as WeekMealData,
           ),
       ),

@@ -1,7 +1,10 @@
-import { either, taskEither } from "fp-ts";
+import { array, either, taskEither } from "fp-ts";
+import type { Either } from "fp-ts/Either";
 import type { TaskEither } from "fp-ts/TaskEither";
+import { constVoid, flow, pipe } from "fp-ts/function";
 import { match } from "ts-pattern";
 import { TechnicalError } from "./errors/technial.error";
+import { ValidationError } from "./errors/validation.error";
 import type { Jsonable } from "./types";
 import type { MealType } from "./types/meal-type";
 
@@ -62,5 +65,23 @@ export const tryCatchTechnical = <A>(
         cause: ensureError(error),
         context,
       }),
+  );
+};
+
+export const validateLengths = <T extends Jsonable>(
+  ...arrays: ReadonlyArray<ReadonlyArray<T>>
+): Either<ValidationError, void> => {
+  const isSameLengthAsFirst = (len: number) => len === arrays[0].length;
+
+  return pipe(
+    arrays.map(arr => arr.length),
+    either.fromPredicate(
+      flow(array.every(isSameLengthAsFirst)),
+      () =>
+        new ValidationError("Input arrays must have the same length", {
+          context: arrays,
+        }),
+    ),
+    either.map(constVoid),
   );
 };

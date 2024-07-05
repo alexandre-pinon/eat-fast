@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "user_id_name_unique_idx" ON "ingredient" USING btree ("user_id",lower("name"));--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "meal_id_ingredient_id_unique_idx" ON "meals_to_ingredients" USING btree ("meal_id","ingredient_id");
