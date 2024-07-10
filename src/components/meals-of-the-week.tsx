@@ -1,5 +1,6 @@
 "use client";
 import type { NonEmptyMeal, WeekMeal, WeekMealData } from "@/entities/meal";
+import { updateMealPosition } from "@/services/meal-service";
 import type { Nullable } from "@/types";
 import type { WeekDay } from "@/types/weekday";
 import {
@@ -78,6 +79,10 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
         undoActiveMeals[lastActiveIndex],
         undoOverMeals[lastOverIndex],
       );
+      swapMealWeekDays(
+        undoActiveMeals[lastActiveIndex],
+        undoOverMeals[lastOverIndex],
+      );
 
       // undo swap
       undoActiveMeals[lastActiveIndex] =
@@ -124,6 +129,7 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
     }
 
     swapMealTypes(activeMeals[activeIndex], overMeals[overIndex]);
+    swapMealWeekDays(activeMeals[activeIndex], overMeals[overIndex]);
 
     // meal swap
     const newActiveMeals = [...activeMeals];
@@ -146,11 +152,24 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
     });
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     setLastSwap(null); // Reset the last swap
 
     if (!event.over || event.over.id === event.active.id) {
       console.log({ event }, "over item is undefined or same as active");
+      if (lastSwap) {
+        const {
+          lastActiveWeekDay,
+          lastActiveIndex,
+          lastOverWeekDay,
+          lastOverIndex,
+        } = lastSwap;
+
+        const activeMeal = mealsOfTheWeek[lastActiveWeekDay][lastActiveIndex];
+        const overMeal = mealsOfTheWeek[lastOverWeekDay][lastOverIndex];
+
+        await updateMealPositions(activeMeal, overMeal);
+      }
       return;
     }
     const activeId = event.active.id.toString();
@@ -187,6 +206,19 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
     setMealsOfTheWeek({
       ...mealsOfTheWeek,
       [activeWeekDay]: arraySwap(activeMeals, activeIndex, overIndex),
+    });
+
+    await updateMealPositions(activeMeals[activeIndex], activeMeals[overIndex]);
+  };
+
+  const updateMealPositions = async (
+    activeMeal: WeekMeal,
+    overMeal: WeekMeal,
+  ): Promise<void> => {
+    [activeMeal, overMeal].map(async meal => {
+      if (!meal.empty) {
+        await updateMealPosition(meal);
+      }
     });
   };
 
@@ -225,10 +257,17 @@ const findWeekDay = (
   return weekDay as Nullable<WeekDay>;
 };
 
-//! this function has side effects
+//WARNING: this function has side effects
 const swapMealTypes = (meal1: WeekMeal, meal2: WeekMeal): void => {
   const mealType1 = meal1.type;
   const mealType2 = meal2.type;
   meal1.type = mealType2;
   meal2.type = mealType1;
+};
+//WARNING: this function has side effects
+const swapMealWeekDays = (meal1: WeekMeal, meal2: WeekMeal): void => {
+  const mealWeekDay1 = meal1.weekDay;
+  const mealWeekDay2 = meal2.weekDay;
+  meal1.weekDay = mealWeekDay2;
+  meal2.weekDay = mealWeekDay1;
 };

@@ -40,6 +40,14 @@ export type CreateMealWithIngredientsInput = {
   ingredients: CreateIngredientInput[];
 };
 
+export const UpdateMealPositionSchema = v.object({
+  type: v.picklist(mealTypes),
+  weekDay: v.picklist(weekDays),
+});
+export type UpdateMealPositionInput = v.InferOutput<
+  typeof UpdateMealPositionSchema
+>;
+
 export type EmptyMeal = Pick<Meal, "id" | "type" | "weekDay"> & { empty: true };
 export type NonEmptyMeal = Meal & { empty: false };
 export type WeekMeal = EmptyMeal | NonEmptyMeal;
@@ -48,3 +56,6 @@ export type WeekMealData = Record<WeekDay, WeekMeal[]>;
 
 export const parseMealAsync = parseEntityAsync(MealSchema);
 export const parseCreateMealInput = parseEntity(CreateMealSchema);
+export const parseUpdateMealPositionInputAsync = parseEntityAsync(
+  UpdateMealPositionSchema,
+);

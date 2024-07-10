@@ -15,5 +15,8 @@ export type Jsonable =
   | { toJSON(): Jsonable };
 
 type StatusCode = 200 | 201 | 204 | 400 | 401 | 403 | 404 | 422 | 500;
-export type ApiErrorResponse = { message: string; code: StatusCode };
+export type ApiErrorResponse = {
+  message: string;
+  issues?: string[];
+};
 export type ApiResponse<T> = NextResponse<T | ApiErrorResponse>;

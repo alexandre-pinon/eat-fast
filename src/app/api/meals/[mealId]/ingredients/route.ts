@@ -23,18 +23,23 @@ export const GET = async (
   return pipe(
     getUserIdFromServerSession(),
     taskEither.apSecondW(getIngredientsByMealId(params.mealId)),
+    taskEither.map(NextResponse.json),
     taskEither.orElseFirstIOK(logError),
     taskEither.orElseW(error =>
       match(error)
-        .returnType<TaskEither<never, ApiErrorResponse>>()
+        .returnType<TaskEither<never, NextResponse<ApiErrorResponse>>>()
         .with(P.instanceOf(UnaunthenticatdError), ({ message }) =>
-          taskEither.right({ message, code: 401 }),
+          taskEither.right(NextResponse.json({ message }, { status: 401 })),
         )
         .otherwise(() =>
-          taskEither.right({ message: "Internal server error", code: 500 }),
+          taskEither.right(
+            NextResponse.json(
+              { message: "Internal server error" },
+              { status: 500 },
+            ),
+          ),
         ),
     ),
-    taskEither.map(NextResponse.json),
     toPromise,
   );
 };
