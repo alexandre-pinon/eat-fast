@@ -16,8 +16,8 @@ import { toPromise, tryCatchTechnical } from "@/utils";
 import { ScrollShadow, Spacer } from "@nextui-org/react";
 import { eq } from "drizzle-orm";
 import { array, option, readonlyArray, record, taskEither } from "fp-ts";
+import type { TaskEither } from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
-import type { TaskEither } from "fp-ts/lib/TaskEither";
 import { redirect } from "next/navigation";
 
 const getMealsByUserId = (
