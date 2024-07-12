@@ -122,6 +122,8 @@ export const IngredientInput = ({
   servings: number;
   removeIngredient: (ingredientId: string) => void;
 }) => {
+  const [quantity, setQuantity] = useState(ingredient.quantity);
+
   return (
     <>
       <Input type="hidden" name="ingredientId" value={ingredient.id} />
@@ -131,7 +133,8 @@ export const IngredientInput = ({
         type="number"
         step="0.1"
         name="quantity"
-        defaultValue={(ingredient.quantity * servings).toString()}
+        value={(quantity * servings).toString()}
+        onValueChange={value => setQuantity(+value / servings)}
       />
       <Select
         aria-label="unit"

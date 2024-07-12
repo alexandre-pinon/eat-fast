@@ -35,7 +35,7 @@ export const SideNav = () => {
       <Logo size={40} />
       <Spacer y={10} />
       <div className="flex flex-col gap-y-4">
-        {links.map((link) => {
+        {links.map(link => {
           const icon = cloneElement(link.icon, { size: 28 });
           return (
             <NavLink

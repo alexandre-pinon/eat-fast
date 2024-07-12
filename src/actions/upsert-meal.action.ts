@@ -17,7 +17,6 @@ import type { MealType } from "@/types/meal-type";
 import type { WeekDay } from "@/types/weekday";
 import {
   revalidatePathIO,
-  toPlainObjectPromise,
   toPromise,
   tryCatchTechnical,
   validateLengths,
@@ -35,9 +34,7 @@ type UpsertMealActionData = {
   weekDay: WeekDay;
   servings: number;
 };
-type UpsertMealFormState =
-  | { mealUpserted: true }
-  | { mealUpserted: false; error?: TechnicalError | ValidationError };
+type UpsertMealFormState = { mealUpserted: boolean };
 
 export const upsertMealAction = async (
   additionalData: UpsertMealActionData,
@@ -52,15 +49,10 @@ export const upsertMealAction = async (
     taskEither.orElseFirstIOK(logError),
     taskEither.tapIO(() => revalidatePathIO("/meals-of-the-week")),
     taskEither.fold(
-      error =>
-        taskEither.right<never, UpsertMealFormState>({
-          mealUpserted: false,
-          error,
-        }),
-      () =>
-        taskEither.right<never, UpsertMealFormState>({ mealUpserted: true }),
+      () => taskEither.right({ mealUpserted: false }),
+      () => taskEither.right({ mealUpserted: true }),
     ),
-    toPlainObjectPromise,
+    toPromise,
   );
 };
 

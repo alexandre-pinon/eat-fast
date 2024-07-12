@@ -1,4 +1,5 @@
-import { upsertMealAction } from "@/actions/meal.actions";
+import { deleteMealAction } from "@/actions/delete-meal.action";
+import { upsertMealAction } from "@/actions/upsert-meal.action";
 import { useModalStore } from "@/hooks/modal-store";
 import {
   type MealModalMode,
@@ -8,8 +9,8 @@ import {
 } from "@/types/meal-modal-state";
 import { isHistory } from "@/types/modal-state";
 import { Button, ButtonGroup } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { useFormState } from "react-dom";
+import { useEffect, useState, useTransition } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import {
   TbCircleCheck,
   TbCircleX,
@@ -25,7 +26,7 @@ import { MealNameInput } from "../inputs/meal-name-input";
 import { MealTimeInput } from "../inputs/meal-time-input";
 
 export const MealModalForm = ({ userId }: { userId: string }) => {
-  const { activeMeal, prevModalState } = useModalStore();
+  const { activeMeal, prevModalState, closeModal } = useModalStore();
 
   const [servings, setServings] = useState(4);
   const [mode, setMode] = useState<MealModalMode>(
@@ -42,6 +43,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
     }),
     { mealUpserted: false },
   );
+  const [deleteMealPending, startDeleteMeal] = useTransition();
 
   useEffect(() => {
     if (formState.mealUpserted) {
@@ -56,6 +58,12 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
   };
   const incrementServings = () => {
     setServings(prevServings => prevServings + 1);
+  };
+  const removeMeal = () => {
+    startDeleteMeal(async () => {
+      await deleteMealAction(activeMeal.id);
+      closeModal();
+    });
   };
 
   return (
@@ -74,34 +82,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
         />
       </div>
       <div className="flex flex-col items-end gap-y-3">
-        {match(mode)
-          .with("normal", () => (
-            <Button
-              isIconOnly
-              color="primary"
-              variant="light"
-              onPress={() => setMode("edit")}
-            >
-              <TbEditCircle size={32} />
-            </Button>
-          ))
-          .with("edit", () => (
-            <div className="inline-flex">
-              <Button isIconOnly color="success" variant="light" type="submit">
-                <TbCircleCheck size={32} />
-              </Button>
-              <Button
-                isIconOnly
-                color="danger"
-                variant="light"
-                onPress={() => setMode("normal")}
-              >
-                <TbCircleX size={32} />
-              </Button>
-            </div>
-          ))
-          .with("add", () => <></>)
-          .exhaustive()}
+        <EditButtons mode={mode} setMode={setMode} />
         <ButtonGroup>
           <Button
             isIconOnly
@@ -128,15 +109,18 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
         <div className="grid grid-cols-3">
           <div />
           <div className="justify-self-center">
-            {isAdd(mode) && (
-              <Button type="submit" color="primary" variant="flat" radius="lg">
-                Add meal
-              </Button>
-            )}
+            {isAdd(mode) && <AddButton />}
           </div>
           <div className="justify-self-end">
             {(isEdit(mode) || isNormal(mode)) && (
-              <Button color="danger" variant="ghost" radius="lg" isIconOnly>
+              <Button
+                color="danger"
+                variant="ghost"
+                radius="lg"
+                isIconOnly
+                onPress={removeMeal}
+                isLoading={deleteMealPending}
+              >
                 <TbTrash size={20} />
               </Button>
             )}
@@ -144,5 +128,64 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
         </div>
       </div>
     </form>
+  );
+};
+
+const EditButtons = ({
+  mode,
+  setMode,
+}: { mode: MealModalMode; setMode: (mode: MealModalMode) => void }) => {
+  const { pending } = useFormStatus();
+
+  return match(mode)
+    .with("normal", () => (
+      <Button
+        isIconOnly
+        color="primary"
+        variant="light"
+        onPress={() => setMode("edit")}
+      >
+        <TbEditCircle size={32} />
+      </Button>
+    ))
+    .with("edit", () => (
+      <div className="inline-flex">
+        <Button
+          isIconOnly
+          color="success"
+          variant="light"
+          type="submit"
+          isLoading={pending}
+        >
+          <TbCircleCheck size={32} />
+        </Button>
+        <Button
+          isIconOnly
+          color="danger"
+          variant="light"
+          onPress={() => setMode("normal")}
+          isDisabled={pending}
+        >
+          <TbCircleX size={32} />
+        </Button>
+      </div>
+    ))
+    .with("add", () => <></>)
+    .exhaustive();
+};
+
+const AddButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      type="submit"
+      color="primary"
+      variant="flat"
+      radius="lg"
+      isLoading={pending}
+    >
+      Add meal
+    </Button>
   );
 };

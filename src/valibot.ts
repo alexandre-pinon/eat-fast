@@ -1,5 +1,6 @@
 import { either, taskEither } from "fp-ts";
 import type { Either } from "fp-ts/Either";
+import type { TaskEither } from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
 import { match } from "ts-pattern";
 import * as v from "valibot";
@@ -28,7 +29,10 @@ export const parseEntityAsync = <
   B extends v.ErrorMessage<v.ObjectIssue> | undefined,
 >(
   schema: v.ObjectSchema<A, B>,
-) => flow(parseEntity(schema), taskEither.fromEither);
+): (<T>(
+  entity: T,
+) => TaskEither<ValidationError, v.InferOutput<typeof schema>>) =>
+  flow(parseEntity(schema), taskEither.fromEither);
 
 export const UUIDSchema = v.pipe(v.string(), v.uuid());
 export const NonEmptyStringSchema = v.pipe(v.string(), v.nonEmpty());

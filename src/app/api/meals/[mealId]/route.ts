@@ -18,7 +18,7 @@ type RouteParams = { params: { mealId: string } };
 export const PUT = async (
   request: Request,
   { params }: RouteParams,
-): Promise<ApiResponse<Record<never, never>>> => {
+): Promise<ApiResponse> => {
   return pipe(
     taskEither.Do,
     taskEither.apS("userId", getUserIdFromServerSession()),
@@ -42,34 +42,30 @@ export const PUT = async (
         `Error while updating meal #${params.mealId}`,
       ),
     ),
-    taskEither.map(() => NextResponse.json({})),
+    taskEither.map(() => new NextResponse(null, { status: 204 })),
     taskEither.orElseFirstIOK(logError),
     taskEither.orElseW(error =>
-      pipe(
-        match(error)
-          .returnType<TaskEither<never, NextResponse<ApiErrorResponse>>>()
-          .with(P.instanceOf(ValidationError), ({ issues, message }) =>
-            taskEither.right(
-              NextResponse.json(
-                { message, issues: issues.map(issue => issue.message) },
-                { status: 400 },
-              ),
-            ),
-          )
-          .with(P.instanceOf(UnaunthenticatdError), ({ message }) =>
-            taskEither.right(NextResponse.json({ message }, { status: 401 })),
-          )
-          .otherwise(() =>
-            taskEither.right(
-              NextResponse.json(
-                { message: "Internal server error" },
-                { status: 500 },
-              ),
+      match(error)
+        .returnType<TaskEither<never, NextResponse<ApiErrorResponse>>>()
+        .with(P.instanceOf(ValidationError), ({ issues, message }) =>
+          taskEither.right(
+            NextResponse.json(
+              { message, issues: issues.map(issue => issue.message) },
+              { status: 400 },
             ),
           ),
-        NextResponse.json,
-        taskEither.right,
-      ),
+        )
+        .with(P.instanceOf(UnaunthenticatdError), ({ message }) =>
+          taskEither.right(NextResponse.json({ message }, { status: 401 })),
+        )
+        .otherwise(() =>
+          taskEither.right(
+            NextResponse.json(
+              { message: "Internal server error" },
+              { status: 500 },
+            ),
+          ),
+        ),
     ),
     toPromise,
   );

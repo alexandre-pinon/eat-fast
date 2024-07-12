@@ -13,8 +13,7 @@ export const updateMealPosition = async (meal: NonEmptyMeal): Promise<void> => {
     });
 
     if (!res.ok) {
-      const json = await res.json();
-      console.error({ status: res.status, json });
+      console.error({ status: res.status, statusText: res.statusText });
     }
   } catch (error) {
     console.error(error);
