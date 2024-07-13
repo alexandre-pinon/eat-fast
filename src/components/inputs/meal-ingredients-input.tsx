@@ -1,9 +1,12 @@
-import type { Ingredient } from "@/entities/ingredient";
+import type { Ingredient, MealIngredient } from "@/entities/ingredient";
 import type { WeekMeal } from "@/entities/meal";
-import { fetchMealIngredients } from "@/services/ingredient-service";
+import {
+  fetchUserIngredients,
+  fetchUserMealIngredients,
+} from "@/services/ingredient-service";
 import { type MealModalMode, isNormal } from "@/types/meal-modal-state";
 import { quantityUnits } from "@/types/quantity-unit";
-import { Skeleton } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Skeleton } from "@nextui-org/react";
 import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { useEffect, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
@@ -22,30 +25,41 @@ export const MealIngredientsInput = ({
   servings,
   userId,
 }: MealIngredientsInputProps) => {
+  const [mealIngredients, setMealIngredients] = useState<MealIngredient[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const formStatus = useFormStatus();
   const [fetchPending, startFetch] = useTransition();
 
   const addIngredient = () => {
-    setIngredients([
-      ...ingredients,
-      { id: uuid(), userId, name: "", quantity: 0, unit: null },
+    setMealIngredients([
+      ...mealIngredients,
+      {
+        id: uuid(),
+        userId,
+        name: "",
+        quantity: 0,
+        unit: null,
+      },
     ]);
   };
 
   const removeIngredient = (ingredientId: string) => {
-    setIngredients(
-      ingredients.filter(ingredient => ingredient.id !== ingredientId),
+    setMealIngredients(
+      mealIngredients.filter(ingredient => ingredient.id !== ingredientId),
     );
   };
 
   useEffect(() => {
     if (!activeMeal.empty) {
       startFetch(() =>
-        fetchMealIngredients(activeMeal.id).then(setIngredients),
+        fetchUserMealIngredients(activeMeal.id).then(setMealIngredients),
       );
     }
   }, [activeMeal]);
+
+  useEffect(() => {
+    fetchUserIngredients(userId).then(setIngredients);
+  }, [userId]);
 
   return (
     <Skeleton
@@ -54,8 +68,8 @@ export const MealIngredientsInput = ({
     >
       {isNormal(mode) ? (
         <div className="flex flex-col gap-y-3">
-          {ingredients.length > 0 ? (
-            ingredients.map(ingredient => (
+          {mealIngredients.length > 0 ? (
+            mealIngredients.map(ingredient => (
               <IngredientItem
                 key={ingredient.id}
                 ingredient={ingredient}
@@ -72,12 +86,13 @@ export const MealIngredientsInput = ({
           <span>Unit</span>
           <span>Ingredient</span>
           <span> </span>
-          {ingredients.map(ingredient => (
+          {mealIngredients.map(ingredient => (
             <IngredientInput
               key={ingredient.id}
               ingredient={ingredient}
               servings={servings}
               removeIngredient={removeIngredient}
+              ingredients={ingredients}
             />
           ))}
           <Button
@@ -98,7 +113,7 @@ export const MealIngredientsInput = ({
 export const IngredientItem = ({
   ingredient,
   servings,
-}: { ingredient: Ingredient; servings: number }) => {
+}: { ingredient: MealIngredient; servings: number }) => {
   return (
     <div className="inline-flex gap-x-2 items-center">
       <TbCircle className="text-primary" size={20} />
@@ -107,7 +122,10 @@ export const IngredientItem = ({
           {ingredient.quantity * servings}
           {ingredient.unit ?? ""}{" "}
         </span>
-        <span className="capitalize">{ingredient.name}</span>
+        <span className="capitalize">
+          {ingredient.name}
+          {!ingredient.unit && ingredient.quantity * servings !== 1 ? "s" : ""}
+        </span>
       </div>
     </div>
   );
@@ -117,12 +135,15 @@ export const IngredientInput = ({
   ingredient,
   servings,
   removeIngredient,
+  ingredients,
 }: {
-  ingredient: Ingredient;
+  ingredient: MealIngredient;
   servings: number;
   removeIngredient: (ingredientId: string) => void;
+  ingredients: Ingredient[];
 }) => {
   const [quantity, setQuantity] = useState(ingredient.quantity);
+  const units = ["", ...quantityUnits];
 
   return (
     <>
@@ -141,19 +162,32 @@ export const IngredientInput = ({
         color="default"
         variant="flat"
         name="unit"
-        defaultSelectedKeys={ingredient.unit ?? undefined}
+        defaultSelectedKeys={ingredient.unit ?? ""}
       >
-        {quantityUnits.map(quantityUnit => (
-          <SelectItem key={quantityUnit}>{quantityUnit}</SelectItem>
+        {units.map(unit => (
+          <SelectItem key={unit}>
+            {unit.length ? (
+              unit
+            ) : (
+              <span className="opacity-50 italic">no units</span>
+            )}
+          </SelectItem>
         ))}
       </Select>
-      <Input
-        color="default"
-        variant="flat"
+      <Autocomplete
         type="text"
         name="ingredientName"
-        defaultValue={ingredient.name}
-      />
+        aria-label="ingredientName"
+        defaultItems={ingredients}
+        defaultSelectedKey={ingredient.name}
+        allowsCustomValue
+      >
+        {ingredient => (
+          <AutocompleteItem key={ingredient.name}>
+            {ingredient.name}
+          </AutocompleteItem>
+        )}
+      </Autocomplete>
       <Button
         isIconOnly
         color="danger"

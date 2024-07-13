@@ -8,30 +8,38 @@ import {
 } from "@/valibot";
 import * as v from "valibot";
 
-export const IngredientSchema = v.object({
+const IngredientSchema = v.object({
   id: UUIDSchema,
   userId: UUIDSchema,
   name: NonEmptyStringSchema,
+});
+
+const MealIngredientSchema = v.object({
+  ...IngredientSchema.entries,
   quantity: StringToNumberSchema("quantity"),
   unit: v.nullable(v.picklist(quantityUnits)),
 });
-export type Ingredient = v.InferOutput<typeof IngredientSchema>;
 
-export const CreateIngredientSchema = v.object({
-  ...IngredientSchema.entries,
+const CreateIngredientSchema = v.object({
+  ...MealIngredientSchema.entries,
   name: v.pipe(
     v.string("Ingredient name must be a string"),
     v.nonEmpty("Ingredient name is required"),
   ),
+  quantity: StringToNumberSchema("quantity"),
   unit: v.pipe(
     v.string(),
     v.transform(unit => (unit.length === 0 ? null : unit)),
     v.nullable(v.picklist(quantityUnits, "Unit is invalid")),
   ),
 });
+
+export type Ingredient = v.InferOutput<typeof IngredientSchema>;
+export type MealIngredient = v.InferOutput<typeof MealIngredientSchema>;
 export type CreateIngredientInput = v.InferOutput<
   typeof CreateIngredientSchema
 >;
 
 export const parseIngredientAsync = parseEntityAsync(IngredientSchema);
+export const parseMealIngredientAsync = parseEntityAsync(MealIngredientSchema);
 export const parseCreateIngredientInput = parseEntity(CreateIngredientSchema);
