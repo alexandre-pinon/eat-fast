@@ -126,6 +126,7 @@ export const meals = pgTable("meal", {
   time: integer("time").notNull(),
   image: text("image"),
   recipe: text("recipe"),
+  archived: boolean("archived").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

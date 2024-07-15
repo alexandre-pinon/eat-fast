@@ -20,13 +20,15 @@ import {
   TbTrash,
 } from "react-icons/tb";
 import { match } from "ts-pattern";
+import { v4 as uuid } from "uuid";
 import { MealIngredientsInput } from "../inputs/meal-ingredients-input";
 import { MealInstructionsInput } from "../inputs/meal-instructions-input";
 import { MealNameInput } from "../inputs/meal-name-input";
 import { MealTimeInput } from "../inputs/meal-time-input";
 
 export const MealModalForm = ({ userId }: { userId: string }) => {
-  const { activeMeal, prevModalState, closeModal } = useModalStore();
+  const { activeMeal, setActiveMeal, prevModalState, closeModal } =
+    useModalStore();
 
   const [servings, setServings] = useState(4);
   const [mode, setMode] = useState<MealModalMode>(
@@ -35,7 +37,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
 
   const [formState, formAction] = useFormState(
     upsertMealAction.bind(null, {
-      mealId: activeMeal.id,
+      mealId: isEdit(mode) ? activeMeal.id : uuid(),
       userId,
       type: activeMeal.type,
       weekDay: activeMeal.weekDay,
@@ -47,6 +49,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
 
   useEffect(() => {
     if (formState.mealUpserted) {
+      setActiveMeal({ ...formState.meal, empty: false });
       setMode("normal");
     }
   }, [formState]);
@@ -59,6 +62,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
   const incrementServings = () => {
     setServings(prevServings => prevServings + 1);
   };
+
   const removeMeal = () => {
     startDeleteMeal(async () => {
       await deleteMealAction(activeMeal.id);

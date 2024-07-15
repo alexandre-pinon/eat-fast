@@ -1,9 +1,11 @@
 import type { Meal } from "@/entities/meal";
 import { useModalStore } from "@/hooks/modal-store";
+import { getArchivedMeals } from "@/services/meal-service";
 import {
   Button,
   Input,
   ModalBody,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -11,34 +13,11 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { type Key, useMemo, useState } from "react";
+import { type Key, useEffect, useMemo, useState, useTransition } from "react";
 import { TbArrowBack, TbSearch, TbTrash } from "react-icons/tb";
-import { v4 as uuid } from "uuid";
-
-const historyMeals = [
-  {
-    id: uuid(),
-    name: "Eggs & bacon",
-    userId: uuid(),
-    type: "breakfast",
-    weekDay: "monday",
-    time: 12,
-    image: null,
-    recipe: null,
-  },
-  {
-    id: uuid(),
-    name: "Fish soup",
-    userId: uuid(),
-    type: "diner",
-    weekDay: "tuesday",
-    time: 30,
-    image: null,
-    recipe: "Mix the fish with the soup",
-  },
-] satisfies Meal[];
 
 export const HistoryModalContent = () => {
+  const [historyMeals, setHistoryMeals] = useState<Meal[]>([]);
   const [filterValue, setFilterValue] = useState("");
   const {
     setModalState,
@@ -48,6 +27,7 @@ export const HistoryModalContent = () => {
     isBackLinkVisible,
     lastEmptyMeal,
   } = useModalStore();
+  const [fetchPending, startFetch] = useTransition();
 
   const filteredMeals = useMemo(
     () =>
@@ -56,7 +36,7 @@ export const HistoryModalContent = () => {
             meal.name.toLowerCase().includes(filterValue.toLowerCase()),
           )
         : historyMeals,
-    [filterValue],
+    [filterValue, historyMeals],
   );
 
   const onRowAction = (key: Key) => {
@@ -77,6 +57,10 @@ export const HistoryModalContent = () => {
   const onPressBacklink = () => {
     setModalState("menu");
   };
+
+  useEffect(() => {
+    startFetch(() => getArchivedMeals().then(setHistoryMeals));
+  }, []);
 
   return (
     <ModalBody className="p-2">
@@ -101,29 +85,31 @@ export const HistoryModalContent = () => {
           onValueChange={setFilterValue}
         />
       </div>
-      <Table
-        removeWrapper
-        selectionMode="single"
-        aria-label="Meal history table"
-        onRowAction={onRowAction}
-      >
-        <TableHeader>
-          <TableColumn>Meal</TableColumn>
-          <TableColumn> </TableColumn>
-        </TableHeader>
-        <TableBody>
-          {filteredMeals.map(meal => (
-            <TableRow className="cursor-pointer" key={meal.id}>
-              <TableCell>{meal.name}</TableCell>
-              <TableCell className="text-end">
-                <Button isIconOnly color="danger" variant="light">
-                  <TbTrash size={20} />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <Skeleton isLoaded={!fetchPending} className="rounded-xl">
+        <Table
+          removeWrapper
+          selectionMode="single"
+          aria-label="Meal history table"
+          onRowAction={onRowAction}
+        >
+          <TableHeader>
+            <TableColumn>Meal</TableColumn>
+            <TableColumn> </TableColumn>
+          </TableHeader>
+          <TableBody>
+            {filteredMeals.map(meal => (
+              <TableRow className="cursor-pointer" key={meal.id}>
+                <TableCell>{meal.name}</TableCell>
+                <TableCell className="text-end">
+                  <Button isIconOnly color="danger" variant="light">
+                    <TbTrash size={20} />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Skeleton>
     </ModalBody>
   );
 };

@@ -8,6 +8,7 @@ import {
 import {
   type CreateMealInput,
   type CreateMealWithIngredientsInput,
+  type Meal,
   parseCreateMealInput,
 } from "@/entities/meal";
 import { TechnicalError } from "@/errors/technial.error";
@@ -34,7 +35,9 @@ type UpsertMealActionData = {
   weekDay: WeekDay;
   servings: number;
 };
-type UpsertMealFormState = { mealUpserted: boolean };
+type UpsertMealFormState =
+  | { mealUpserted: true; meal: Meal }
+  | { mealUpserted: false };
 
 export const upsertMealAction = async (
   additionalData: UpsertMealActionData,
@@ -45,12 +48,17 @@ export const upsertMealAction = async (
     formData,
     parseFormData(additionalData),
     taskEither.fromEither,
-    taskEither.flatMap(upsertMealWithIngredients(additionalData.servings)),
+    taskEither.tap(upsertMealWithIngredients(additionalData.servings)),
     taskEither.orElseFirstIOK(logError),
     taskEither.tapIO(() => revalidatePathIO("/meals-of-the-week")),
     taskEither.fold(
-      () => taskEither.right({ mealUpserted: false }),
-      () => taskEither.right({ mealUpserted: true }),
+      () =>
+        taskEither.right<never, UpsertMealFormState>({ mealUpserted: false }),
+      ({ meal }) =>
+        taskEither.right<never, UpsertMealFormState>({
+          mealUpserted: true,
+          meal,
+        }),
     ),
     toPromise,
   );

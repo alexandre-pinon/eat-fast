@@ -2,7 +2,7 @@ import type { WeekMeal } from "@/entities/meal";
 import { useModalStore } from "@/hooks/modal-store";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { type ReactNode, useEffect } from "react";
+import type { ReactNode } from "react";
 
 export const SortableItem = ({
   meal,
@@ -27,14 +27,7 @@ export const SortableItem = ({
     setModalState,
     setActiveMeal,
     hideBackLink,
-    activeMeal,
   } = useModalStore();
-
-  useEffect(() => {
-    if (meal.id === activeMeal.id) {
-      setActiveMeal(meal);
-    }
-  }, [meal]);
 
   const handleOnClick = () => {
     setActiveMeal(meal);

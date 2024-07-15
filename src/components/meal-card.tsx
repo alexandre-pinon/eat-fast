@@ -1,3 +1,4 @@
+import { archiveMealAction } from "@/actions/archive-meal.action";
 import type { NonEmptyMeal } from "@/entities/meal";
 import { getPlaceHolderImageByType } from "@/utils";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
@@ -9,6 +10,10 @@ type MealCardProps = {
 };
 
 export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
+  const onPressArchive = async () => {
+    await archiveMealAction(meal.id);
+  };
+
   return (
     <Card
       className={`bg-primary text-primary-foreground text-start ${isDragOverlay ? "scale-105" : ""}`}
@@ -31,6 +36,7 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
             variant="faded"
             radius="full"
             size="sm"
+            onPress={onPressArchive}
           >
             <TbCheck size={16} />
           </Button>

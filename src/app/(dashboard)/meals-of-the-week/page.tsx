@@ -14,7 +14,7 @@ import { logError } from "@/logger";
 import type { WeekDay } from "@/types/weekday";
 import { toPromise, tryCatchTechnical } from "@/utils";
 import { ScrollShadow, Spacer } from "@nextui-org/react";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { array, option, readonlyArray, record, taskEither } from "fp-ts";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
@@ -25,7 +25,11 @@ const getMealsByUserId = (
 ): TaskEither<TechnicalError, Meal[]> => {
   return pipe(
     tryCatchTechnical(
-      () => db.select().from(meals).where(eq(meals.userId, userId)),
+      () =>
+        db
+          .select()
+          .from(meals)
+          .where(and(eq(meals.userId, userId), eq(meals.archived, false))),
       "Error while finding meals by user id",
     ),
     taskEither.flatMap(taskEither.traverseArray(parseMealAsync)),

@@ -1,0 +1,1 @@
+ALTER TABLE "meal" ADD COLUMN "archived" boolean DEFAULT false NOT NULL;

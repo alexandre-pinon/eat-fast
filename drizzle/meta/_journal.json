@@ -43,6 +43,13 @@
       "when": 1720506120169,
       "tag": "0005_shocking_tattoo",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1721024120916,
+      "tag": "0006_mighty_pyro",
+      "breakpoints": true
     }
   ]
 }

@@ -165,7 +165,7 @@ export const IngredientInput = ({
         defaultSelectedKeys={ingredient.unit ?? ""}
       >
         {units.map(unit => (
-          <SelectItem key={unit}>
+          <SelectItem key={unit} textValue={ingredient.unit ?? "no units"}>
             {unit.length ? (
               unit
             ) : (
