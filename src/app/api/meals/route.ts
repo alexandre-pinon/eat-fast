@@ -5,7 +5,7 @@ import { type Meal, parseMealAsync } from "@/entities/meal";
 import type { TechnicalError } from "@/errors/technial.error";
 import { UnaunthenticatdError } from "@/errors/unauthenticated.error";
 import type { ValidationError } from "@/errors/validation.error";
-import { logDebug, logError } from "@/logger";
+import { logError } from "@/logger";
 import type { ApiErrorResponse, ApiResponse } from "@/types";
 import { stringToBoolean, toPromise, tryCatchTechnical } from "@/utils";
 import { and, eq } from "drizzle-orm";
@@ -26,7 +26,6 @@ export const GET = async (
     taskEither.of,
     taskEither.bindTo("archived"),
     taskEither.apS("userId", getUserIdFromServerSession()),
-    taskEither.tapIO(logDebug),
     taskEither.flatMap(getArchivedMealsByUserId),
     taskEither.map(NextResponse.json),
     taskEither.orElseFirstIOK(logError),

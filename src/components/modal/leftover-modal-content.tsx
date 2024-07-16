@@ -9,7 +9,7 @@ import {
   CardFooter,
   Image,
   ModalBody,
-  Skeleton,
+  Spinner,
 } from "@nextui-org/react";
 import { useEffect, useState, useTransition } from "react";
 import { TbArrowBack } from "react-icons/tb";
@@ -56,7 +56,9 @@ export const LeftoverModalContent = () => {
         <></>
       )}
       <span className="text-xl font-semibold">Add leftovers</span>
-      <Skeleton isLoaded={!fetchPending} className="rounded-xl">
+      {fetchPending ? (
+        <Spinner label="Loading..." className="py-8" />
+      ) : (
         <div className="grid grid-cols-4 gap-2">
           {leftoverMeals.map(meal => (
             <LeftoverCard
@@ -66,7 +68,7 @@ export const LeftoverModalContent = () => {
             />
           ))}
         </div>
-      </Skeleton>
+      )}
     </ModalBody>
   );
 };

@@ -7,7 +7,7 @@ import {
   isEdit,
   isNormal,
 } from "@/types/meal-modal-state";
-import { isHistory } from "@/types/modal-state";
+import { isHistory, isLeftover } from "@/types/modal-state";
 import { Button, ButtonGroup } from "@nextui-org/react";
 import { useEffect, useState, useTransition } from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -32,7 +32,9 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
 
   const [servings, setServings] = useState(4);
   const [mode, setMode] = useState<MealModalMode>(
-    activeMeal.empty || isHistory(prevModalState) ? "add" : "normal",
+    activeMeal.empty || isHistory(prevModalState) || isLeftover(prevModalState)
+      ? "add"
+      : "normal",
   );
 
   const [formState, formAction] = useFormState(
