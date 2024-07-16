@@ -94,3 +94,6 @@ export const revalidatePathIO =
   (path: string): IO<void> =>
   () =>
     revalidatePath(path);
+
+export const stringToBoolean = (str: string): boolean =>
+  str.toLowerCase() === "true";

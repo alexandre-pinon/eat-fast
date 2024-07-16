@@ -5,19 +5,28 @@ import { type Meal, parseMealAsync } from "@/entities/meal";
 import type { TechnicalError } from "@/errors/technial.error";
 import { UnaunthenticatdError } from "@/errors/unauthenticated.error";
 import type { ValidationError } from "@/errors/validation.error";
-import { logError } from "@/logger";
+import { logDebug, logError } from "@/logger";
 import type { ApiErrorResponse, ApiResponse } from "@/types";
-import { toPromise, tryCatchTechnical } from "@/utils";
+import { stringToBoolean, toPromise, tryCatchTechnical } from "@/utils";
 import { and, eq } from "drizzle-orm";
-import { taskEither } from "fp-ts";
+import { option, taskEither } from "fp-ts";
+import type { Option } from "fp-ts/Option";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { pipe } from "fp-ts/function";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { P, match } from "ts-pattern";
 
-export const GET = async (): Promise<ApiResponse<readonly Meal[]>> => {
+export const GET = async (
+  request: NextRequest,
+): Promise<ApiResponse<readonly Meal[]>> => {
   return pipe(
-    getUserIdFromServerSession(),
+    request.nextUrl.searchParams.get("archived"),
+    option.fromNullable,
+    option.map(stringToBoolean),
+    taskEither.of,
+    taskEither.bindTo("archived"),
+    taskEither.apS("userId", getUserIdFromServerSession()),
+    taskEither.tapIO(logDebug),
     taskEither.flatMap(getArchivedMealsByUserId),
     taskEither.map(NextResponse.json),
     taskEither.orElseFirstIOK(logError),
@@ -40,16 +49,24 @@ export const GET = async (): Promise<ApiResponse<readonly Meal[]>> => {
   );
 };
 
-const getArchivedMealsByUserId = (
-  userId: string,
-): TaskEither<TechnicalError | ValidationError, readonly Meal[]> => {
+const getArchivedMealsByUserId = (input: {
+  userId: string;
+  archived: Option<boolean>;
+}): TaskEither<TechnicalError | ValidationError, readonly Meal[]> => {
   return pipe(
     tryCatchTechnical(
       () =>
         db
           .select()
           .from(meals)
-          .where(and(eq(meals.userId, userId), eq(meals.archived, true))),
+          .where(
+            and(
+              eq(meals.userId, input.userId),
+              option.isSome(input.archived)
+                ? eq(meals.archived, input.archived.value)
+                : undefined,
+            ),
+          ),
       "Error while finding archived meals by user id",
     ),
     taskEither.flatMap(taskEither.traverseArray(parseMealAsync)),

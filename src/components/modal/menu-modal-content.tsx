@@ -21,7 +21,7 @@ export const MenuModalContent = () => {
   const onPressLeftoverMeal = () => {
     setPrevModalState("menu");
     showBackLink();
-    setModalState("history");
+    setModalState("leftover");
   };
 
   const onPressMealHistory = () => {

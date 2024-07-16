@@ -1,6 +1,6 @@
 import type { Meal } from "@/entities/meal";
 import { useModalStore } from "@/hooks/modal-store";
-import { getArchivedMeals } from "@/services/meal-service";
+import { getMeals } from "@/services/meal-service";
 import {
   Button,
   Input,
@@ -59,7 +59,7 @@ export const HistoryModalContent = () => {
   };
 
   useEffect(() => {
-    startFetch(() => getArchivedMeals().then(setHistoryMeals));
+    startFetch(() => getMeals({ archived: "true" }).then(setHistoryMeals));
   }, []);
 
   return (

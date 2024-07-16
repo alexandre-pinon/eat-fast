@@ -4,9 +4,16 @@ import type {
   UpdateMealPositionInput,
 } from "@/entities/meal";
 
-export const getArchivedMeals = async (): Promise<Meal[]> => {
+type MealSearchParams = {
+  archived?: string;
+};
+export const getMeals = async (params?: MealSearchParams): Promise<Meal[]> => {
   try {
-    const res = await fetch("/api/meals/archived");
+    const url = new URL("/api/meals", window.location.origin);
+    const search = new URLSearchParams(params);
+    url.search = search.toString();
+
+    const res = await fetch(url);
     const json = await res.json();
 
     if (!res.ok) {

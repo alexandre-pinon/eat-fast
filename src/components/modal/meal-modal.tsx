@@ -3,6 +3,7 @@ import type { ModalState } from "@/types/modal-state";
 import { Modal, ModalContent } from "@nextui-org/react";
 import { match } from "ts-pattern";
 import { HistoryModalContent } from "./history-modal-content";
+import { LeftoverModalContent } from "./leftover-modal-content";
 import { MealModalContent } from "./meal-modal-content";
 import { MenuModalContent } from "./menu-modal-content";
 
@@ -27,5 +28,6 @@ const renderModalContent = (modalState: ModalState) => {
     .with("meal", () => <MealModalContent />)
     .with("history", () => <HistoryModalContent />)
     .with("menu", () => <MenuModalContent />)
+    .with("leftover", () => <LeftoverModalContent />)
     .exhaustive();
 };
