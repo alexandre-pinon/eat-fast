@@ -28,6 +28,7 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   image: text("image"),
+  displayBreakfast: boolean("display_breakfast").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()

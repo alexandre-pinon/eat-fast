@@ -1,5 +1,6 @@
 "use client";
 import type { NonEmptyMeal, WeekMeal, WeekMealData } from "@/entities/meal";
+import type { UserPreferences } from "@/entities/user";
 import { updateMealPosition } from "@/services/meal-service";
 import type { Nullable } from "@/types";
 import type { WeekDay } from "@/types/weekday";
@@ -26,8 +27,8 @@ type LastSwap = {
   lastOverIndex: number;
 };
 
-type MealsOfTheWeekProps = { data: WeekMealData };
-export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
+type MealsOfTheWeekProps = { data: WeekMealData; preferences: UserPreferences };
+export const MealsOfTheWeek = ({ data, preferences }: MealsOfTheWeekProps) => {
   const [mealsOfTheWeek, setMealsOfTheWeek] = useState(data);
   const [draggedMeal, setDraggedMeal] = useState<Nullable<NonEmptyMeal>>(null);
   const [lastSwap, setLastSwap] = useState<Nullable<LastSwap>>(null);
@@ -233,7 +234,12 @@ export const MealsOfTheWeek = ({ data }: MealsOfTheWeekProps) => {
         sensors={sensors}
       >
         {Object.entries(mealsOfTheWeek).map(([day, meals]) => (
-          <DayOfTheWeekCard key={day} day={day as WeekDay} meals={meals} />
+          <DayOfTheWeekCard
+            key={day}
+            day={day as WeekDay}
+            meals={meals}
+            preferences={preferences}
+          />
         ))}
         <DragOverlay>
           {draggedMeal

@@ -31,7 +31,7 @@ const links = [
 
 export const SideNav = () => {
   return (
-    <div className="bg-background p-6">
+    <div className="p-6">
       <Logo size={40} />
       <Spacer y={10} />
       <div className="flex flex-col gap-y-4">

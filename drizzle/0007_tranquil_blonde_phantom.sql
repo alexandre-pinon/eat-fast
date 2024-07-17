@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "display_breakfast" boolean DEFAULT false NOT NULL;

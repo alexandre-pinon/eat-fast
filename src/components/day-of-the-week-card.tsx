@@ -1,4 +1,5 @@
 import type { WeekMeal } from "@/entities/meal";
+import type { UserPreferences } from "@/entities/user";
 import type { WeekDay } from "@/types/weekday";
 import { SortableContext, rectSwappingStrategy } from "@dnd-kit/sortable";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
@@ -11,8 +12,13 @@ import { SortableItem } from "./sortable-item";
 export type DayOfTheWeekCardProps = {
   day: WeekDay;
   meals: WeekMeal[];
+  preferences: UserPreferences;
 };
-export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
+export const DayOfTheWeekCard = ({
+  day,
+  meals,
+  preferences,
+}: DayOfTheWeekCardProps) => {
   const [breakfast, lunch, diner] = meals;
 
   return (
@@ -24,11 +30,17 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
         <CardHeader className="justify-center">
           <span className="font-medium text-lg capitalize">{day}</span>
         </CardHeader>
-        <CardBody className="grid grid-rows-3 gap-y-4">
-          <div className="flex flex-col gap-y-2">
-            <span>Breakfast</span>
-            {dispayDndItem(breakfast)}
-          </div>
+        <CardBody
+          className={`grid gap-y-4 ${preferences.displayBreakfast ? "grid-rows-3" : "grid-rows-2"}`}
+        >
+          {preferences.displayBreakfast ? (
+            <div className="flex flex-col gap-y-2">
+              <span>Breakfast</span>
+              {dispayDndItem(breakfast)}
+            </div>
+          ) : (
+            <></>
+          )}
           <div className="flex flex-col gap-y-2">
             <span>Lunch</span>
             {dispayDndItem(lunch)}

@@ -9,15 +9,17 @@ import {
   type WeekMealData,
   parseMealAsync,
 } from "@/entities/meal";
+import type { UserPreferences } from "@/entities/user";
 import type { TechnicalError } from "@/errors/technial.error";
 import { logError } from "@/logger";
+import { getPreferencesByUserId } from "@/repositories/user-repository";
 import type { WeekDay } from "@/types/weekday";
 import { toPromise, tryCatchTechnical } from "@/utils";
 import { ScrollShadow, Spacer } from "@nextui-org/react";
 import { and, eq } from "drizzle-orm";
 import { array, option, readonlyArray, record, taskEither } from "fp-ts";
 import type { TaskEither } from "fp-ts/TaskEither";
-import { pipe } from "fp-ts/function";
+import { flow, pipe } from "fp-ts/function";
 import { redirect } from "next/navigation";
 
 const getMealsByUserId = (
@@ -30,7 +32,7 @@ const getMealsByUserId = (
           .select()
           .from(meals)
           .where(and(eq(meals.userId, userId), eq(meals.archived, false))),
-      "Error while finding meals by user id",
+      `Error while finding meals for user #${userId}`,
     ),
     taskEither.flatMap(taskEither.traverseArray(parseMealAsync)),
     taskEither.map(readonlyArray.toArray),
@@ -76,11 +78,26 @@ const groupMealsByWeekDay = (userMeals: Meal[]): WeekMealData =>
     ),
   );
 
-const getWeekMeals = (): Promise<WeekMealData> => {
+const getWeekMeals: (
+  userId: string,
+) => TaskEither<TechnicalError, WeekMealData> = flow(
+  getMealsByUserId,
+  taskEither.map(groupMealsByWeekDay),
+);
+
+const getUserData = (): Promise<{
+  data: WeekMealData;
+  preferences: UserPreferences;
+}> => {
   return pipe(
     getUserIdFromServerSession(),
-    taskEither.flatMap(getMealsByUserId),
-    taskEither.map(groupMealsByWeekDay),
+    taskEither.flatMap(userId =>
+      pipe(
+        taskEither.Do,
+        taskEither.apS("data", getWeekMeals(userId)),
+        taskEither.apS("preferences", getPreferencesByUserId(userId)),
+      ),
+    ),
     taskEither.orElseFirstIOK(logError),
     toPromise,
   );
@@ -88,7 +105,8 @@ const getWeekMeals = (): Promise<WeekMealData> => {
 
 export default async function MealsOfTheWeekPage() {
   try {
-    const data = await getWeekMeals();
+    const { data, preferences } = await getUserData();
+
     return (
       <div>
         <h1 className="text-4xl font-semibold leading-none">
@@ -99,11 +117,11 @@ export default async function MealsOfTheWeekPage() {
           hideScrollBar
           className="flex gap-x-4 flex-nowrap overflow-x-scroll"
         >
-          <MealsOfTheWeek data={data} />
+          <MealsOfTheWeek data={data} preferences={preferences} />
         </ScrollShadow>
       </div>
     );
   } catch {
-    redirect("/");
+    redirect("/signin");
   }
 }
