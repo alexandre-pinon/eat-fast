@@ -1,7 +1,14 @@
 import { archiveMealAction } from "@/actions/archive-meal.action";
 import type { NonEmptyMeal } from "@/entities/meal";
 import { getPlaceHolderImageByType } from "@/utils";
-import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Image,
+  Tooltip,
+} from "@nextui-org/react";
 import { TbCheck } from "react-icons/tb";
 
 type MealCardProps = {
@@ -29,17 +36,24 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
         <span className="line-clamp-2 self-start">{meal.name}</span>
         <div className="flex flex-col items-end gap-y-1">
           <span className="font-light text-small">~{meal.time}min</span>
-          <Button
-            className="w-6 h-6 min-w-6"
-            isIconOnly
-            color="primary"
-            variant="faded"
-            radius="full"
-            size="sm"
-            onPress={onPressArchive}
+          <Tooltip
+            placement="bottom"
+            color="success"
+            content="Archive meal"
+            delay={300}
           >
-            <TbCheck size={16} />
-          </Button>
+            <Button
+              className="w-6 h-6 min-w-6"
+              isIconOnly
+              color="success"
+              variant="faded"
+              radius="full"
+              size="sm"
+              onPress={onPressArchive}
+            >
+              <TbCheck size={16} />
+            </Button>
+          </Tooltip>
         </div>
       </CardFooter>
     </Card>

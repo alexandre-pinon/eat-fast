@@ -63,6 +63,7 @@ const config: Config = {
               "700": "#188525",
               "800": "#0F6B21",
               "900": "#095920",
+              foreground: "#FFFFFF",
               DEFAULT: "#37BA30",
             },
             secondary: {
