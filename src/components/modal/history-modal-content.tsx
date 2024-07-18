@@ -59,7 +59,7 @@ export const HistoryModalContent = () => {
   };
 
   useEffect(() => {
-    startFetch(() => getMeals({ archived: "true" }).then(setHistoryMeals));
+    startFetch(() => getMeals({ archived: true }).then(setHistoryMeals));
   }, []);
 
   return (

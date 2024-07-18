@@ -8,11 +8,11 @@ import type { ValidationError } from "@/errors/validation.error";
 import { logError } from "@/logger";
 import type { ApiErrorResponse, ApiResponse } from "@/types";
 import { stringToBoolean, toPromise, tryCatchTechnical } from "@/utils";
-import { and, eq } from "drizzle-orm";
-import { option, taskEither } from "fp-ts";
+import { and, eq, ne } from "drizzle-orm";
+import { boolean, identity, option, record, taskEither } from "fp-ts";
 import type { Option } from "fp-ts/Option";
 import type { TaskEither } from "fp-ts/TaskEither";
-import { pipe } from "fp-ts/function";
+import { flow, pipe } from "fp-ts/function";
 import { type NextRequest, NextResponse } from "next/server";
 import { P, match } from "ts-pattern";
 
@@ -20,11 +20,8 @@ export const GET = async (
   request: NextRequest,
 ): Promise<ApiResponse<readonly Meal[]>> => {
   return pipe(
-    request.nextUrl.searchParams.get("archived"),
-    option.fromNullable,
-    option.map(stringToBoolean),
+    parseRequestSearchParams(request.nextUrl.searchParams),
     taskEither.of,
-    taskEither.bindTo("archived"),
     taskEither.apS("userId", getUserIdFromServerSession()),
     taskEither.flatMap(getArchivedMealsByUserId),
     taskEither.map(NextResponse.json),
@@ -48,10 +45,43 @@ export const GET = async (
   );
 };
 
+const parseRequestSearchParams = (
+  searchParams: URLSearchParams,
+): {
+  archived: Option<boolean>;
+  displayBreakfast: Option<boolean>;
+} => {
+  return pipe(
+    identity.Do,
+    identity.apS("archived", option.fromNullable(searchParams.get("archived"))),
+    identity.apS(
+      "displayBreakfast",
+      option.fromNullable(searchParams.get("displayBreakfast")),
+    ),
+    identity.map(record.map(option.map(stringToBoolean))),
+  );
+};
+
 const getArchivedMealsByUserId = (input: {
   userId: string;
   archived: Option<boolean>;
+  displayBreakfast: Option<boolean>;
 }): TaskEither<TechnicalError | ValidationError, readonly Meal[]> => {
+  const archivedCondition = flow(
+    option.map((archived: boolean) => eq(meals.archived, archived)),
+    option.toUndefined,
+  );
+
+  const displayBreakfastCondition = flow(
+    option.flatMap(
+      boolean.fold(
+        () => option.some(ne(meals.type, "breakfast")),
+        () => option.none,
+      ),
+    ),
+    option.toUndefined,
+  );
+
   return pipe(
     tryCatchTechnical(
       () =>
@@ -61,9 +91,8 @@ const getArchivedMealsByUserId = (input: {
           .where(
             and(
               eq(meals.userId, input.userId),
-              option.isSome(input.archived)
-                ? eq(meals.archived, input.archived.value)
-                : undefined,
+              archivedCondition(input.archived),
+              displayBreakfastCondition(input.displayBreakfast),
             ),
           ),
       "Error while finding archived meals by user id",

@@ -1,6 +1,7 @@
 "use client";
 import type { NonEmptyMeal, WeekMeal, WeekMealData } from "@/entities/meal";
 import type { UserPreferences } from "@/entities/user";
+import { useModalStore } from "@/hooks/modal-store";
 import { updateMealPosition } from "@/services/meal-service";
 import type { Nullable } from "@/types";
 import type { WeekDay } from "@/types/weekday";
@@ -29,6 +30,7 @@ type LastSwap = {
 
 type MealsOfTheWeekProps = { data: WeekMealData; preferences: UserPreferences };
 export const MealsOfTheWeek = ({ data, preferences }: MealsOfTheWeekProps) => {
+  const { setPreferences } = useModalStore();
   const [mealsOfTheWeek, setMealsOfTheWeek] = useState(data);
   const [draggedMeal, setDraggedMeal] = useState<Nullable<NonEmptyMeal>>(null);
   const [lastSwap, setLastSwap] = useState<Nullable<LastSwap>>(null);
@@ -43,6 +45,10 @@ export const MealsOfTheWeek = ({ data, preferences }: MealsOfTheWeekProps) => {
   useEffect(() => {
     setMealsOfTheWeek(data);
   }, [data]);
+
+  useEffect(() => {
+    setPreferences(preferences);
+  }, [preferences]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const activeMeal = Object.values(mealsOfTheWeek)
@@ -234,12 +240,7 @@ export const MealsOfTheWeek = ({ data, preferences }: MealsOfTheWeekProps) => {
         sensors={sensors}
       >
         {Object.entries(mealsOfTheWeek).map(([day, meals]) => (
-          <DayOfTheWeekCard
-            key={day}
-            day={day as WeekDay}
-            meals={meals}
-            preferences={preferences}
-          />
+          <DayOfTheWeekCard key={day} day={day as WeekDay} meals={meals} />
         ))}
         <DragOverlay>
           {draggedMeal

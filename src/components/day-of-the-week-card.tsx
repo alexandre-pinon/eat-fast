@@ -1,5 +1,5 @@
 import type { WeekMeal } from "@/entities/meal";
-import type { UserPreferences } from "@/entities/user";
+import { useModalStore } from "@/hooks/modal-store";
 import type { WeekDay } from "@/types/weekday";
 import { SortableContext, rectSwappingStrategy } from "@dnd-kit/sortable";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
@@ -12,13 +12,9 @@ import { SortableItem } from "./sortable-item";
 export type DayOfTheWeekCardProps = {
   day: WeekDay;
   meals: WeekMeal[];
-  preferences: UserPreferences;
 };
-export const DayOfTheWeekCard = ({
-  day,
-  meals,
-  preferences,
-}: DayOfTheWeekCardProps) => {
+export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
+  const { preferences } = useModalStore();
   const [breakfast, lunch, diner] = meals;
 
   return (
@@ -31,9 +27,9 @@ export const DayOfTheWeekCard = ({
           <span className="font-medium text-lg capitalize">{day}</span>
         </CardHeader>
         <CardBody
-          className={`grid gap-y-4 ${preferences.displayBreakfast ? "grid-rows-3" : "grid-rows-2"}`}
+          className={`grid gap-y-4 ${preferences?.displayBreakfast ? "grid-rows-3" : "grid-rows-2"}`}
         >
-          {preferences.displayBreakfast ? (
+          {preferences?.displayBreakfast ? (
             <div className="flex flex-col gap-y-2">
               <span>Breakfast</span>
               {dispayDndItem(breakfast)}

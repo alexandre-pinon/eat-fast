@@ -1,4 +1,5 @@
 import type { EmptyMeal, WeekMeal } from "@/entities/meal";
+import type { UserPreferences } from "@/entities/user";
 import type { ModalState } from "@/types/modal-state";
 import { v4 as uuid } from "uuid";
 import { create } from "zustand";
@@ -18,6 +19,8 @@ type ModalStore = {
   isBackLinkVisible: boolean;
   showBackLink: () => void;
   hideBackLink: () => void;
+  preferences?: UserPreferences;
+  setPreferences: (preferences: UserPreferences) => void;
 };
 
 export const useModalStore = create<ModalStore>(set => {
@@ -44,5 +47,7 @@ export const useModalStore = create<ModalStore>(set => {
     isBackLinkVisible: false,
     showBackLink: () => set({ isBackLinkVisible: true }),
     hideBackLink: () => set({ isBackLinkVisible: false }),
+    preferences: undefined,
+    setPreferences: (preferences: UserPreferences) => set({ preferences }),
   };
 });

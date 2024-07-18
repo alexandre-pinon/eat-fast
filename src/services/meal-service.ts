@@ -3,14 +3,25 @@ import type {
   NonEmptyMeal,
   UpdateMealPositionInput,
 } from "@/entities/meal";
+import type { UserPreferences } from "@/entities/user";
 
 type MealSearchParams = {
-  archived?: string;
+  archived?: boolean;
+  preferences?: UserPreferences;
 };
 export const getMeals = async (params?: MealSearchParams): Promise<Meal[]> => {
   try {
     const url = new URL("/api/meals", window.location.origin);
-    const search = new URLSearchParams(params);
+    const search = new URLSearchParams({
+      ...(params?.archived !== undefined
+        ? { archived: params.archived.toString() }
+        : {}),
+      ...(params?.preferences
+        ? {
+            displayBreakfast: params.preferences.displayBreakfast.toString(),
+          }
+        : {}),
+    });
     url.search = search.toString();
 
     const res = await fetch(url);

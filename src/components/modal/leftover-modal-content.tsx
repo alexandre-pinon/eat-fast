@@ -22,6 +22,7 @@ export const LeftoverModalContent = () => {
     showBackLink,
     isBackLinkVisible,
     lastEmptyMeal,
+    preferences,
   } = useModalStore();
   const [leftoverMeals, setLeftoverMeals] = useState<Meal[]>([]);
   const [fetchPending, startFetch] = useTransition();
@@ -43,8 +44,10 @@ export const LeftoverModalContent = () => {
   };
 
   useEffect(() => {
-    startFetch(() => getMeals({ archived: "false" }).then(setLeftoverMeals));
-  }, []);
+    startFetch(() =>
+      getMeals({ archived: false, preferences }).then(setLeftoverMeals),
+    );
+  }, [preferences]);
 
   return (
     <ModalBody className="p-4">
