@@ -1,4 +1,5 @@
 import { archiveMealAction } from "@/actions/archive-meal.action";
+import { deleteMealAction } from "@/actions/delete-meal.action";
 import type { NonEmptyMeal } from "@/entities/meal";
 import { getPlaceHolderImageByType } from "@/utils";
 import {
@@ -6,9 +7,11 @@ import {
   Card,
   CardBody,
   CardFooter,
+  Chip,
   Image,
   Tooltip,
 } from "@nextui-org/react";
+import { useTransition } from "react";
 import { TbCheck } from "react-icons/tb";
 
 type MealCardProps = {
@@ -17,8 +20,14 @@ type MealCardProps = {
 };
 
 export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
-  const onPressArchive = async () => {
-    await archiveMealAction(meal.id);
+  const [archivePending, startArchive] = useTransition();
+
+  const onPressArchive = () => {
+    startArchive(async () => {
+      meal.isLeftover
+        ? await deleteMealAction(meal.id)
+        : await archiveMealAction(meal.id);
+    });
   };
 
   return (
@@ -31,6 +40,18 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
           src={meal.image ?? getPlaceHolderImageByType(meal.type)}
           alt={meal.name}
         />
+        {meal.isLeftover ? (
+          <Chip
+            className="absolute z-10 top-1 right-1"
+            color="warning"
+            variant="solid"
+            size="sm"
+          >
+            leftover
+          </Chip>
+        ) : (
+          <></>
+        )}
       </CardBody>
       <CardFooter className="grid grid-cols-[1fr_min-content] space-x-2">
         <span className="line-clamp-2 self-start">{meal.name}</span>
@@ -38,7 +59,7 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
           <span className="font-light text-small">~{meal.time}min</span>
           <Tooltip
             placement="bottom"
-            color="success"
+            color="default"
             content="Archive meal"
             delay={300}
           >
@@ -49,6 +70,7 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
               variant="faded"
               radius="full"
               size="sm"
+              isLoading={archivePending}
               onPress={onPressArchive}
             >
               <TbCheck size={16} />

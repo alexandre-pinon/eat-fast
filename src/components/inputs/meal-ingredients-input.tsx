@@ -162,14 +162,11 @@ export const IngredientInput = ({
         color="default"
         variant="flat"
         name="unit"
-        defaultSelectedKeys={ingredient.unit ?? ""}
+        defaultSelectedKeys={ingredient.unit ? [ingredient.unit] : [""]}
       >
         {units.map(unit => (
-          <SelectItem
-            key={unit}
-            textValue={unit.length > 0 ? unit : "no units"}
-          >
-            {unit.length ? (
+          <SelectItem key={unit} textValue={unit.length > 0 ? unit : " "}>
+            {unit.length > 0 ? (
               unit
             ) : (
               <span className="opacity-50 italic">no units</span>

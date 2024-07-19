@@ -37,6 +37,7 @@ export const LeftoverModalContent = () => {
       empty: false,
       type: lastEmptyMeal.type,
       weekDay: lastEmptyMeal.weekDay,
+      isLeftover: true,
     });
     setPrevModalState("leftover");
     showBackLink();

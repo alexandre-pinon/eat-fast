@@ -34,6 +34,7 @@ type UpsertMealActionData = {
   type: MealType;
   weekDay: WeekDay;
   servings: number;
+  isLeftover: boolean;
 };
 type UpsertMealFormState =
   | { mealUpserted: true; meal: Meal }
@@ -146,6 +147,7 @@ const upsertMeal =
                 time: meal.time,
                 image: meal.image,
                 recipe: meal.recipe,
+                isLeftover: meal.isLeftover,
               },
             }),
         `Error while upserting meal #${meal.id}`,
@@ -256,6 +258,7 @@ const parseFormData =
           userId: additionalData.userId,
           type: additionalData.type,
           weekDay: additionalData.weekDay,
+          isLeftover: additionalData.isLeftover,
           name: formData.get("name"),
           time: formData.get("time"),
           //FIXME: add image input

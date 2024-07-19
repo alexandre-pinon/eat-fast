@@ -1,6 +1,8 @@
+import { deleteMealAction } from "@/actions/delete-meal.action";
 import type { Meal } from "@/entities/meal";
 import { useModalStore } from "@/hooks/modal-store";
 import { getMeals } from "@/services/meal-service";
+import type { Nullable } from "@/types";
 import {
   Button,
   Input,
@@ -19,6 +21,7 @@ import { TbArrowBack, TbSearch, TbTrash } from "react-icons/tb";
 export const HistoryModalContent = () => {
   const [historyMeals, setHistoryMeals] = useState<Meal[]>([]);
   const [filterValue, setFilterValue] = useState("");
+  const [deleteMealId, setDeleteMealId] = useState<Nullable<string>>(null);
   const {
     setModalState,
     setActiveMeal,
@@ -28,6 +31,7 @@ export const HistoryModalContent = () => {
     lastEmptyMeal,
   } = useModalStore();
   const [fetchPending, startFetch] = useTransition();
+  const [deletePending, startDelete] = useTransition();
 
   const filteredMeals = useMemo(
     () =>
@@ -54,12 +58,24 @@ export const HistoryModalContent = () => {
     }
   };
 
+  const fetchArchivedMeals = () =>
+    startFetch(() => getMeals({ archived: true }).then(setHistoryMeals));
+
+  const removeArchivedMeal = (mealId: string) => {
+    setDeleteMealId(mealId);
+    startDelete(async () => {
+      await deleteMealAction(mealId);
+      fetchArchivedMeals();
+      setDeleteMealId(null);
+    });
+  };
+
   const onPressBacklink = () => {
     setModalState("menu");
   };
 
   useEffect(() => {
-    startFetch(() => getMeals({ archived: true }).then(setHistoryMeals));
+    fetchArchivedMeals();
   }, []);
 
   return (
@@ -101,7 +117,14 @@ export const HistoryModalContent = () => {
               <TableRow className="cursor-pointer" key={meal.id}>
                 <TableCell>{meal.name}</TableCell>
                 <TableCell className="text-end">
-                  <Button isIconOnly color="danger" variant="light">
+                  <Button
+                    isIconOnly
+                    color="danger"
+                    variant="light"
+                    isLoading={deletePending && meal.id === deleteMealId}
+                    isDisabled={deletePending && meal.id !== deleteMealId}
+                    onPress={() => removeArchivedMeal(meal.id)}
+                  >
                     <TbTrash size={20} />
                   </Button>
                 </TableCell>

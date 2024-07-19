@@ -15,6 +15,7 @@ export const MealNameInput = ({ mode, activeMeal }: MealNameInputProps) => {
       {isNormal(mode) ? (
         <p className="text-xl font-semibold">
           {activeMeal.empty ? `New ${activeMeal.type}` : activeMeal.name}
+          {activeMeal.isLeftover ? " (leftover)" : ""}
         </p>
       ) : (
         <Input
@@ -25,6 +26,13 @@ export const MealNameInput = ({ mode, activeMeal }: MealNameInputProps) => {
           defaultValue={activeMeal.empty ? "" : activeMeal.name}
           placeholder="Meal name"
           size="lg"
+          startContent={
+            activeMeal.isLeftover ? (
+              <span className="opacity-75">(leftover)</span>
+            ) : (
+              <></>
+            )
+          }
         />
       )}
     </Skeleton>

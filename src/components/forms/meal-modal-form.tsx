@@ -44,6 +44,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
       type: activeMeal.type,
       weekDay: activeMeal.weekDay,
       servings,
+      isLeftover: activeMeal.isLeftover,
     }),
     { mealUpserted: false },
   );

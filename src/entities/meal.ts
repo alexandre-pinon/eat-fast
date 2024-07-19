@@ -19,6 +19,7 @@ export const MealSchema = v.object({
   time: v.number(),
   image: v.nullable(v.string()),
   recipe: v.nullable(v.string()),
+  isLeftover: v.boolean(),
 });
 export type Meal = v.InferOutput<typeof MealSchema>;
 
@@ -48,7 +49,9 @@ export type UpdateMealPositionInput = v.InferOutput<
   typeof UpdateMealPositionSchema
 >;
 
-export type EmptyMeal = Pick<Meal, "id" | "type" | "weekDay"> & { empty: true };
+export type EmptyMeal = Pick<Meal, "id" | "type" | "weekDay" | "isLeftover"> & {
+  empty: true;
+};
 export type NonEmptyMeal = Meal & { empty: false };
 export type WeekMeal = EmptyMeal | NonEmptyMeal;
 

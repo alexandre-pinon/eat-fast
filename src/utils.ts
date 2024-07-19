@@ -3,7 +3,7 @@ import type { Either } from "fp-ts/Either";
 import type { IO } from "fp-ts/IO";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { constVoid, flow, pipe } from "fp-ts/function";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { match } from "ts-pattern";
 import { TechnicalError } from "./errors/technial.error";
 import { ValidationError } from "./errors/validation.error";
@@ -94,6 +94,11 @@ export const revalidatePathIO =
   (path: string): IO<void> =>
   () =>
     revalidatePath(path);
+
+export const revalidateTagIO =
+  (tag: string): IO<void> =>
+  () =>
+    revalidateTag(tag);
 
 export const stringToBoolean = (str: string): boolean =>
   str.toLowerCase() === "true";

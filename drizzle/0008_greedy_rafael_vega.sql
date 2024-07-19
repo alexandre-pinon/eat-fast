@@ -1,0 +1,1 @@
+ALTER TABLE "meal" ADD COLUMN "is_leftover" boolean DEFAULT false NOT NULL;

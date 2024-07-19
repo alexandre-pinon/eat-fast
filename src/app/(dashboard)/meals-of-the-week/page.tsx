@@ -54,6 +54,7 @@ const generateMissingMealsByDay =
             empty: true,
             type,
             weekDay,
+            isLeftover: false,
           })),
         ),
       ),
