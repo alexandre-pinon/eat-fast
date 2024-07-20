@@ -15,12 +15,7 @@ export const toggleDisplayBreakfastAction = async (
   return pipe(
     tryCatchTechnical(
       () =>
-        db
-          .update(users)
-          .set({
-            displayBreakfast,
-          })
-          .where(eq(users.id, userId)),
+        db.update(users).set({ displayBreakfast }).where(eq(users.id, userId)),
       `Error while updating display breakfast to ${displayBreakfast} for user #${userId}`,
     ),
     taskEither.orElseFirstIOK(logError),

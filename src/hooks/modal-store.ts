@@ -30,6 +30,7 @@ export const useModalStore = create<ModalStore>(set => {
     type: "lunch",
     weekDay: "monday",
     isLeftover: false,
+    servings: 1,
   } satisfies EmptyMeal;
 
   return {

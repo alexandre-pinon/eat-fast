@@ -10,8 +10,9 @@ import { Autocomplete, AutocompleteItem, Skeleton } from "@nextui-org/react";
 import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { useEffect, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
-import { TbCircle, TbCirclePlus, TbTrash } from "react-icons/tb";
+import { TbCirclePlus, TbTrash } from "react-icons/tb";
 import { v4 as uuid } from "uuid";
+import { IngredientItem } from "../ingredient-item";
 
 type MealIngredientsInputProps = {
   mode: MealModalMode;
@@ -107,27 +108,6 @@ export const MealIngredientsInput = ({
         </div>
       )}
     </Skeleton>
-  );
-};
-
-export const IngredientItem = ({
-  ingredient,
-  servings,
-}: { ingredient: MealIngredient; servings: number }) => {
-  return (
-    <div className="inline-flex gap-x-2 items-center">
-      <TbCircle className="text-primary" size={20} />
-      <div>
-        <span>
-          {ingredient.quantity * servings}
-          {ingredient.unit ?? ""}{" "}
-        </span>
-        <span className="capitalize">
-          {ingredient.name}
-          {!ingredient.unit && ingredient.quantity * servings !== 1 ? "s" : ""}
-        </span>
-      </div>
-    </div>
   );
 };
 

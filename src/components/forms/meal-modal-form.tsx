@@ -8,15 +8,13 @@ import {
   isNormal,
 } from "@/types/meal-modal-state";
 import { isHistory, isLeftover } from "@/types/modal-state";
-import { Button, ButtonGroup } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useEffect, useState, useTransition } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import {
   TbCircleCheck,
   TbCircleX,
   TbEditCircle,
-  TbMinus,
-  TbPlus,
   TbTrash,
 } from "react-icons/tb";
 import { match } from "ts-pattern";
@@ -25,12 +23,13 @@ import { MealIngredientsInput } from "../inputs/meal-ingredients-input";
 import { MealInstructionsInput } from "../inputs/meal-instructions-input";
 import { MealNameInput } from "../inputs/meal-name-input";
 import { MealTimeInput } from "../inputs/meal-time-input";
+import { ServingsInput } from "../inputs/servings-input";
 
 export const MealModalForm = ({ userId }: { userId: string }) => {
   const { activeMeal, setActiveMeal, prevModalState, closeModal } =
     useModalStore();
 
-  const [servings, setServings] = useState(4);
+  const [servings, setServings] = useState(activeMeal.servings);
   const [mode, setMode] = useState<MealModalMode>(
     activeMeal.empty || isHistory(prevModalState) || isLeftover(prevModalState)
       ? "add"
@@ -57,15 +56,6 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
     }
   }, [formState]);
 
-  const decrementServings = () => {
-    setServings(prevServings =>
-      prevServings > 1 ? prevServings - 1 : prevServings,
-    );
-  };
-  const incrementServings = () => {
-    setServings(prevServings => prevServings + 1);
-  };
-
   const removeMeal = () => {
     startDeleteMeal(async () => {
       await deleteMealAction(activeMeal.id);
@@ -90,22 +80,12 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
       </div>
       <div className="flex flex-col items-end gap-y-3">
         <EditButtons mode={mode} setMode={setMode} />
-        <ButtonGroup>
-          <Button
-            isIconOnly
-            color="primary"
-            isDisabled={servings === 1}
-            onPress={decrementServings}
-          >
-            <TbMinus />
-          </Button>
-          <div className="bg-primary text-primary-foreground text-small h-10 inline-flex items-center px-4">
-            {servings} servings
-          </div>
-          <Button isIconOnly color="primary" onPress={incrementServings}>
-            <TbPlus />
-          </Button>
-        </ButtonGroup>
+        <ServingsInput
+          mode={mode}
+          mealId={activeMeal.id}
+          servings={servings}
+          setServings={setServings}
+        />
         <MealTimeInput mode={mode} activeMeal={activeMeal} />
       </div>
       <div className="col-span-2">

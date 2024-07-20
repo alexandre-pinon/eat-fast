@@ -8,9 +8,9 @@ import {
   parseEntityAsync,
 } from "@/valibot";
 import * as v from "valibot";
-import type { CreateIngredientInput } from "./ingredient";
+import type { CreateIngredientInput, MealIngredient } from "./ingredient";
 
-export const MealSchema = v.object({
+const MealSchema = v.object({
   id: UUIDSchema,
   userId: UUIDSchema,
   name: NonEmptyStringSchema,
@@ -20,10 +20,10 @@ export const MealSchema = v.object({
   image: v.nullable(v.string()),
   recipe: v.nullable(v.string()),
   isLeftover: v.boolean(),
+  servings: v.number(),
 });
-export type Meal = v.InferOutput<typeof MealSchema>;
 
-export const CreateMealSchema = v.object({
+const CreateMealSchema = v.object({
   ...MealSchema.entries,
   name: v.pipe(
     v.string("Meal name must be a string"),
@@ -35,27 +35,33 @@ export const CreateMealSchema = v.object({
     v.transform(recipe => (recipe.length === 0 ? null : recipe)),
   ),
 });
-export type CreateMealInput = v.InferOutput<typeof CreateMealSchema>;
-export type CreateMealWithIngredientsInput = {
-  meal: CreateMealInput;
-  ingredients: CreateIngredientInput[];
-};
 
-export const UpdateMealPositionSchema = v.object({
+const UpdateMealPositionSchema = v.object({
   type: v.picklist(mealTypes),
   weekDay: v.picklist(weekDays),
 });
+
+export type Meal = v.InferOutput<typeof MealSchema>;
+export type CreateMealInput = v.InferOutput<typeof CreateMealSchema>;
 export type UpdateMealPositionInput = v.InferOutput<
   typeof UpdateMealPositionSchema
 >;
 
-export type EmptyMeal = Pick<Meal, "id" | "type" | "weekDay" | "isLeftover"> & {
+export type EmptyMeal = Pick<
+  Meal,
+  "id" | "type" | "weekDay" | "isLeftover" | "servings"
+> & {
   empty: true;
 };
 export type NonEmptyMeal = Meal & { empty: false };
 export type WeekMeal = EmptyMeal | NonEmptyMeal;
-
 export type WeekMealData = Record<WeekDay, WeekMeal[]>;
+export type WeekMealIngredient = Record<WeekDay, MealIngredient[]>;
+
+export type CreateMealWithIngredientsInput = {
+  meal: CreateMealInput;
+  ingredients: CreateIngredientInput[];
+};
 
 export const parseMealAsync = parseEntityAsync(MealSchema);
 export const parseCreateMealInput = parseEntity(CreateMealSchema);

@@ -1,4 +1,5 @@
 import { quantityUnits } from "@/types/quantity-unit";
+import { weekDays } from "@/types/weekday";
 import {
   NonEmptyStringSchema,
   StringToNumberSchema,
@@ -20,6 +21,11 @@ const MealIngredientSchema = v.object({
   unit: v.nullable(v.picklist(quantityUnits)),
 });
 
+const AggregatedMealIngredientSchema = v.object({
+  ...MealIngredientSchema.entries,
+  weekDay: v.picklist(weekDays),
+});
+
 const CreateIngredientSchema = v.object({
   ...MealIngredientSchema.entries,
   name: v.pipe(
@@ -36,10 +42,16 @@ const CreateIngredientSchema = v.object({
 
 export type Ingredient = v.InferOutput<typeof IngredientSchema>;
 export type MealIngredient = v.InferOutput<typeof MealIngredientSchema>;
+export type AggregatedMealIngredient = v.InferOutput<
+  typeof AggregatedMealIngredientSchema
+>;
 export type CreateIngredientInput = v.InferOutput<
   typeof CreateIngredientSchema
 >;
 
 export const parseIngredientAsync = parseEntityAsync(IngredientSchema);
 export const parseMealIngredientAsync = parseEntityAsync(MealIngredientSchema);
+export const parseAggregatedMealIngredientAsync = parseEntityAsync(
+  AggregatedMealIngredientSchema,
+);
 export const parseCreateIngredientInput = parseEntity(CreateIngredientSchema);

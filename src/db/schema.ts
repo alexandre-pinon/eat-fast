@@ -129,6 +129,7 @@ export const meals = pgTable("meal", {
   recipe: text("recipe"),
   archived: boolean("archived").notNull().default(false),
   isLeftover: boolean("is_leftover").notNull().default(false),
+  servings: integer("servings").notNull().default(1),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
@@ -168,6 +169,9 @@ export const mealsToIngredients = pgTable(
       .notNull()
       .references(() => ingredients.id, { onDelete: "cascade" }),
     quantity: decimal("quantity").notNull().default("0"),
+    quantityWithServings: decimal("quantity_with_servings")
+      .notNull()
+      .default("0"),
     unit: quantityUnit("unit"),
   },
   table => ({

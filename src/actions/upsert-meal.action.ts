@@ -1,4 +1,5 @@
 "use server";
+
 import { type DbTransaction, type UpsertResult, db } from "@/db/client";
 import { ingredients, meals, mealsToIngredients } from "@/db/schema";
 import {
@@ -73,7 +74,7 @@ const upsertMealWithIngredients = (
   return input =>
     tryCatchTechnical(
       () =>
-        db.transaction(async tx =>
+        db.transaction(tx =>
           pipe(
             input.meal,
             upsertMeal(tx),
@@ -111,6 +112,7 @@ const upsertMealWithIngredients = (
                     mealId: input.meal.id,
                     ingredientId: upsertedId,
                     quantity: (ingredient.quantity / servings).toString(),
+                    quantityWithServings: ingredient.quantity.toString(),
                     unit: ingredient.unit,
                   }),
                 ),
@@ -148,6 +150,7 @@ const upsertMeal =
                 image: meal.image,
                 recipe: meal.recipe,
                 isLeftover: meal.isLeftover,
+                servings: meal.servings,
               },
             }),
         `Error while upserting meal #${meal.id}`,
@@ -227,6 +230,7 @@ const upsertMealIngredient =
               ],
               set: {
                 quantity: input.quantity,
+                quantityWithServings: input.quantityWithServings,
                 unit: input.unit,
               },
             }),
@@ -259,6 +263,7 @@ const parseFormData =
           type: additionalData.type,
           weekDay: additionalData.weekDay,
           isLeftover: additionalData.isLeftover,
+          servings: additionalData.servings,
           name: formData.get("name"),
           time: formData.get("time"),
           //FIXME: add image input
