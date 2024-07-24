@@ -30,6 +30,7 @@ import type { NonEmptyArray } from "fp-ts/NonEmptyArray";
 import type { Semigroup } from "fp-ts/Semigroup";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
+import { redirect } from "next/navigation";
 
 const getAllMealIngredientsWithAggregatedQuantity = (
   userId: string,
@@ -152,23 +153,27 @@ const getWeekMealIngredients = (): Promise<WeekMealIngredient> => {
 };
 
 export default async function ShoppingListPage() {
-  const weekMealIngredients = await getWeekMealIngredients();
+  try {
+    const weekMealIngredients = await getWeekMealIngredients();
 
-  return (
-    <div>
-      <h1 className="text-4xl font-semibold leading-none">Shopping list</h1>
-      <Spacer y={16} />
-      <div className="space-y-2">
-        {Object.entries(weekMealIngredients).map(([day, ingredients]) => (
-          <ShoppingCard
-            key={day}
-            day={day as WeekDay}
-            ingredients={ingredients}
-          />
-        ))}
+    return (
+      <div>
+        <h1 className="text-4xl font-semibold leading-none">Shopping list</h1>
+        <Spacer y={16} />
+        <div className="space-y-2">
+          {Object.entries(weekMealIngredients).map(([day, ingredients]) => (
+            <ShoppingCard
+              key={day}
+              day={day as WeekDay}
+              ingredients={ingredients}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  } catch {
+    redirect("/signin");
+  }
 }
 
 const ShoppingCard = ({
