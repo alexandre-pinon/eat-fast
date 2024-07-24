@@ -8,7 +8,7 @@ import {
   isNormal,
 } from "@/types/meal-modal-state";
 import { isHistory, isLeftover } from "@/types/modal-state";
-import { Button } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import { useEffect, useState, useTransition } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import {
@@ -79,7 +79,11 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
         />
       </div>
       <div className="flex flex-col items-end gap-y-3">
-        <EditButtons mode={mode} setMode={setMode} />
+        <EditButtons
+          mode={mode}
+          setMode={setMode}
+          isLeftover={activeMeal.isLeftover}
+        />
         <ServingsInput
           mode={mode}
           mealId={activeMeal.id}
@@ -121,19 +125,35 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
 const EditButtons = ({
   mode,
   setMode,
-}: { mode: MealModalMode; setMode: (mode: MealModalMode) => void }) => {
+  isLeftover,
+}: {
+  mode: MealModalMode;
+  setMode: (mode: MealModalMode) => void;
+  isLeftover: boolean;
+}) => {
   const { pending } = useFormStatus();
 
   return match(mode)
     .with("normal", () => (
-      <Button
-        isIconOnly
-        color="primary"
-        variant="light"
-        onPress={() => setMode("edit")}
+      <Tooltip
+        placement="top"
+        color="default"
+        content="You can't edit leftovers"
+        delay={300}
+        isDisabled={!isLeftover}
       >
-        <TbEditCircle size={32} />
-      </Button>
+        <div>
+          <Button
+            isIconOnly
+            color="primary"
+            variant="light"
+            onPress={() => setMode("edit")}
+            isDisabled={isLeftover}
+          >
+            <TbEditCircle size={32} />
+          </Button>
+        </div>
+      </Tooltip>
     ))
     .with("edit", () => (
       <div className="inline-flex">
