@@ -49,7 +49,7 @@ const getAllMealIngredientsWithAggregatedQuantity = (
               userId: ingredients.userId,
               name: ingredients.name,
               unit: mealsToIngredients.unit,
-              quantity: sum(mealsToIngredients.quantity),
+              quantity: sum(mealsToIngredients.quantityWithServings),
               weekDay: meals.weekDay,
             })
             .from(mealsToIngredients)
