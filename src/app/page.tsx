@@ -1,6 +1,14 @@
+import { auth } from "@/auth";
 import { NavBar } from "@/components/navbar";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+
+  if (session?.sub) {
+    redirect("/meals-of-the-week");
+  }
+
   return (
     <>
       <header>
