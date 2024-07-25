@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:prod": "pnpm build && pnpm migrate",
     "start": "next start",
     "lint": "next lint",
     "generate": "dotenv -e .env.local -- drizzle-kit generate",
