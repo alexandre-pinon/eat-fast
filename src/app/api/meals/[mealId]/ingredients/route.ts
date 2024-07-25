@@ -63,6 +63,7 @@ const getMealIngredientsByUserId = (input: {
             name: ingredients.name,
             unit: mealsToIngredients.unit,
             quantity: mealsToIngredients.quantity,
+            checked: mealsToIngredients.checked,
           })
           .from(ingredients)
           .innerJoin(

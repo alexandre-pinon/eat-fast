@@ -1,15 +1,40 @@
+"use client";
+
+import { toggleMealIngredientCheckAction } from "@/actions/toggle-meal-ingredient-check.action";
 import type { MealIngredient } from "@/entities/ingredient";
-import { TbCircle } from "react-icons/tb";
+import { Checkbox } from "@nextui-org/react";
 
 export const IngredientItem = ({
-  ingredient,
+  mealIngredient,
   servings,
-}: { ingredient: MealIngredient; servings: number }) => {
-  const quantity = ingredient.quantity * servings;
-  const unit = ingredient.unit ?? "";
+  mealId,
+  lineThrough = false,
+}: {
+  mealIngredient: MealIngredient;
+  servings: number;
+  mealId: string | null;
+  lineThrough?: boolean;
+}) => {
+  const quantity = mealIngredient.quantity * servings;
+  const unit = mealIngredient.unit ?? "";
+
+  const onCheckboxValueChange = async (checked: boolean) => {
+    await toggleMealIngredientCheckAction(
+      mealIngredient.id,
+      mealIngredient.unit,
+      mealId,
+      checked,
+    );
+  };
+
   return (
-    <div className="inline-flex gap-x-2 items-center">
-      <TbCircle className="text-primary" size={20} />
+    <Checkbox
+      color="primary"
+      radius="full"
+      lineThrough={lineThrough}
+      defaultSelected={mealIngredient.checked}
+      onValueChange={onCheckboxValueChange}
+    >
       <div>
         <span>
           {quantity}
@@ -17,10 +42,10 @@ export const IngredientItem = ({
           {["tsp", "tbsp"].includes(unit) ? `${unit}. ` : `${unit} `}
         </span>
         <span>
-          {ingredient.name}
-          {!ingredient.unit && (quantity === 0 || quantity > 1) ? "s" : ""}
+          {mealIngredient.name}
+          {!mealIngredient.unit && (quantity === 0 || quantity > 1) ? "s" : ""}
         </span>
       </div>
-    </div>
+    </Checkbox>
   );
 };

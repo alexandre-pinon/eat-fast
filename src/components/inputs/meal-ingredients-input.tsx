@@ -40,6 +40,7 @@ export const MealIngredientsInput = ({
         name: "",
         quantity: 0,
         unit: null,
+        checked: false,
       },
     ]);
   };
@@ -73,8 +74,9 @@ export const MealIngredientsInput = ({
             mealIngredients.map(ingredient => (
               <IngredientItem
                 key={ingredient.id}
-                ingredient={ingredient}
+                mealIngredient={ingredient}
                 servings={servings}
+                mealId={activeMeal.id}
               />
             ))
           ) : (

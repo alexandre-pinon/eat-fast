@@ -173,6 +173,7 @@ export const mealsToIngredients = pgTable(
       .notNull()
       .default("0"),
     unit: quantityUnit("unit"),
+    checked: boolean("checked").default(false),
   },
   table => ({
     mealIdIngredientIdUniqueIxd: uniqueIndex(

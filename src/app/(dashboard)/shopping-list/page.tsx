@@ -50,6 +50,7 @@ const getAllMealIngredientsWithAggregatedQuantity = (
               name: ingredients.name,
               unit: mealsToIngredients.unit,
               quantity: sum(mealsToIngredients.quantityWithServings),
+              checked: mealsToIngredients.checked,
               weekDay: meals.weekDay,
             })
             .from(mealsToIngredients)
@@ -68,7 +69,12 @@ const getAllMealIngredientsWithAggregatedQuantity = (
                   : [ne(meals.type, "breakfast")]),
               ),
             )
-            .groupBy(ingredients.id, mealsToIngredients.unit, meals.weekDay),
+            .groupBy(
+              ingredients.id,
+              mealsToIngredients.unit,
+              mealsToIngredients.checked,
+              meals.weekDay,
+            ),
         "Error while finding all meal ingredients with aggregated quantity",
       ),
     ),
@@ -86,12 +92,14 @@ const groupIngredients = (
     userId: string;
     quantity: number;
     weekDays: NonEmptyArray<WeekDay>;
+    checked: boolean;
   }> = {
     concat: (x, y) => ({
       id: x.id,
       userId: x.userId,
       quantity: x.quantity + y.quantity,
       weekDays: nonEmptyArray.concat(x.weekDays)(y.weekDays),
+      checked: x.checked && y.checked,
     }),
   };
   const weekMealIngredientMonoid = record.getMonoid<WeekDay, MealIngredient[]>(
@@ -122,19 +130,23 @@ const groupIngredients = (
         userId: ingredient.userId,
         quantity: ingredient.quantity,
         weekDays: [ingredient.weekDay],
+        checked: ingredient.checked,
       },
     })),
-    record.collect(string.Ord)((key, { weekDays, id, userId, quantity }) => {
-      const [name, unit] = key.split("-");
-      return {
-        weekDay: getEarliestDay(weekDays),
-        name,
-        unit: (unit.length > 0 ? unit : null) as QuantityUnit,
-        id,
-        userId,
-        quantity,
-      };
-    }),
+    record.collect(string.Ord)(
+      (key, { weekDays, id, userId, quantity, checked }) => {
+        const [name, unit] = key.split("-");
+        return {
+          weekDay: getEarliestDay(weekDays),
+          name,
+          unit: (unit.length > 0 ? unit : null) as QuantityUnit,
+          id,
+          userId,
+          quantity,
+          checked,
+        };
+      },
+    ),
     array.sortBy([mealIngredientByWeekDay]),
     array.foldMap(weekMealIngredientMonoid)(
       ({ weekDay, ...ingredient }) =>
@@ -161,11 +173,11 @@ export default async function ShoppingListPage() {
         <h1 className="text-4xl font-semibold leading-none">Shopping list</h1>
         <Spacer y={16} />
         <div className="space-y-2">
-          {Object.entries(weekMealIngredients).map(([day, ingredients]) => (
+          {Object.entries(weekMealIngredients).map(([day, mealIngredients]) => (
             <ShoppingCard
               key={day}
               day={day as WeekDay}
-              ingredients={ingredients}
+              mealIngredients={mealIngredients}
             />
           ))}
         </div>
@@ -177,9 +189,9 @@ export default async function ShoppingListPage() {
 }
 
 const ShoppingCard = ({
-  ingredients,
+  mealIngredients,
   day,
-}: { ingredients: MealIngredient[]; day: WeekDay }) => {
+}: { mealIngredients: MealIngredient[]; day: WeekDay }) => {
   return (
     <Card
       shadow="none"
@@ -190,11 +202,13 @@ const ShoppingCard = ({
       </span>
       <CardBody>
         <div className="flex flex-col gap-y-3">
-          {ingredients.map(ingredient => (
+          {mealIngredients.map(ingredient => (
             <IngredientItem
               key={ingredient.id}
-              ingredient={ingredient}
+              mealIngredient={ingredient}
               servings={1}
+              mealId={null}
+              lineThrough
             />
           ))}
         </div>

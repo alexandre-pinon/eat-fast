@@ -232,6 +232,7 @@ const upsertMealIngredient =
                 quantity: input.quantity,
                 quantityWithServings: input.quantityWithServings,
                 unit: input.unit,
+                checked: false,
               },
             }),
         `Error while upserting ingredient #${input.ingredientId} in #${input.mealId}`,

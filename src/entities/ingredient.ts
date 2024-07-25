@@ -19,6 +19,7 @@ const MealIngredientSchema = v.object({
   ...IngredientSchema.entries,
   quantity: StringToNumberSchema("quantity"),
   unit: v.nullable(v.picklist(quantityUnits)),
+  checked: v.boolean(),
 });
 
 const AggregatedMealIngredientSchema = v.object({
@@ -38,6 +39,7 @@ const CreateIngredientSchema = v.object({
     v.transform(unit => (unit.length === 0 ? null : unit)),
     v.nullable(v.picklist(quantityUnits, "Unit is invalid")),
   ),
+  checked: v.undefined(),
 });
 
 export type Ingredient = v.InferOutput<typeof IngredientSchema>;

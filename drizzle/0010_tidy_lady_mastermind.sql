@@ -1,0 +1,1 @@
+ALTER TABLE "meals_to_ingredients" ADD COLUMN "checked" boolean DEFAULT false;
