@@ -2,6 +2,7 @@
 
 import { Button, type ButtonVariantProps } from "@nextui-org/react";
 import { signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { TbLogout } from "react-icons/tb";
 
 type SignOutButtonProps = ButtonVariantProps;
@@ -9,6 +10,8 @@ type SignOutButtonProps = ButtonVariantProps;
 export const SignOutButton = ({
   ...buttonVariantProps
 }: SignOutButtonProps) => {
+  const t = useTranslations();
+
   return (
     <Button
       className="pl-3 gap-x-3"
@@ -17,7 +20,7 @@ export const SignOutButton = ({
       onPress={() => signOut({ callbackUrl: "/signin" })}
       {...buttonVariantProps}
     >
-      Sign out
+      {t("signOut")}
     </Button>
   );
 };

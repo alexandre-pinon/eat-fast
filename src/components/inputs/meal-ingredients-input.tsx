@@ -8,6 +8,7 @@ import { type MealModalMode, isNormal } from "@/types/meal-modal-state";
 import { quantityUnits } from "@/types/quantity-unit";
 import { Autocomplete, AutocompleteItem, Skeleton } from "@nextui-org/react";
 import { Button, Input, Select, SelectItem } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import { TbCirclePlus, TbTrash } from "react-icons/tb";
@@ -63,6 +64,8 @@ export const MealIngredientsInput = ({
     fetchUserIngredients(userId).then(setIngredients);
   }, [userId]);
 
+  const t = useTranslations("MealModal");
+
   return (
     <Skeleton
       isLoaded={!formStatus.pending && !fetchPending}
@@ -80,14 +83,14 @@ export const MealIngredientsInput = ({
               />
             ))
           ) : (
-            <span className="italic opacity-50">No ingredients added</span>
+            <span className="italic opacity-50">{t("noIngredientsAdded")}</span>
           )}
         </div>
       ) : (
         <div className="grid grid-cols-[1fr_1fr_2fr_min-content] gap-x-4 gap-y-2 justify-items-center">
-          <span>Quantity</span>
-          <span>Unit</span>
-          <span>Ingredient</span>
+          <span>{t("quantity")}</span>
+          <span>{t("unit")}</span>
+          <span>{t("ingredient")}</span>
           <span> </span>
           {mealIngredients.map(ingredient => (
             <IngredientInput
@@ -99,13 +102,13 @@ export const MealIngredientsInput = ({
             />
           ))}
           <Button
-            className="pl-2 w-full"
+            className="pl-2 col-span-2 justify-self-start"
             color="primary"
             variant="light"
             startContent={<TbCirclePlus size={24} />}
             onPress={addIngredient}
           >
-            Add ingredient
+            {t("addIngredient")}
           </Button>
         </div>
       )}
@@ -125,7 +128,9 @@ export const IngredientInput = ({
   ingredients: Ingredient[];
 }) => {
   const [quantity, setQuantity] = useState(ingredient.quantity);
-  const units = ["", ...quantityUnits];
+  const units = ["", ...quantityUnits] as const;
+
+  const t = useTranslations("MealModal");
 
   return (
     <>
@@ -147,11 +152,14 @@ export const IngredientInput = ({
         defaultSelectedKeys={ingredient.unit ? [ingredient.unit] : [""]}
       >
         {units.map(unit => (
-          <SelectItem key={unit} textValue={unit.length > 0 ? unit : " "}>
-            {unit.length > 0 ? (
-              unit
+          <SelectItem
+            key={unit}
+            textValue={unit === "" ? " " : t(`quantityUnit.${unit}`)}
+          >
+            {unit === "" ? (
+              <span className="opacity-50 italic">({t("noUnits")})</span>
             ) : (
-              <span className="opacity-50 italic">no units</span>
+              t(`quantityUnit.${unit}`)
             )}
           </SelectItem>
         ))}

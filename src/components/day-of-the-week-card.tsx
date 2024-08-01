@@ -3,6 +3,7 @@ import { useModalStore } from "@/hooks/modal-store";
 import type { WeekDay } from "@/types/weekday";
 import { SortableContext, rectSwappingStrategy } from "@dnd-kit/sortable";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { match } from "ts-pattern";
 import { AddMealButton } from "./add-meal-button";
 import { DroppableItem } from "./droppable-item";
@@ -17,6 +18,8 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
   const { preferences } = useModalStore();
   const [breakfast, lunch, diner] = meals;
 
+  const t = useTranslations("DayOfTheWeekCard");
+
   return (
     <SortableContext items={meals} strategy={rectSwappingStrategy}>
       <Card
@@ -24,25 +27,27 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
         className="flex-shrink-0 w-full max-w-60 bg-primary-100 px-2"
       >
         <CardHeader className="justify-center">
-          <span className="font-medium text-lg capitalize">{day}</span>
+          <span className="font-medium text-lg capitalize">
+            {t(`weekDay.${day}`)}
+          </span>
         </CardHeader>
         <CardBody
           className={`grid gap-y-4 ${preferences?.displayBreakfast ? "grid-rows-3" : "grid-rows-2"}`}
         >
           {preferences?.displayBreakfast ? (
             <div className="flex flex-col gap-y-2">
-              <span>Breakfast</span>
+              <span>{t("mealType.breakfast")}</span>
               {dispayDndItem(breakfast)}
             </div>
           ) : (
             <></>
           )}
           <div className="flex flex-col gap-y-2">
-            <span>Lunch</span>
+            <span>{t("mealType.lunch")}</span>
             {dispayDndItem(lunch)}
           </div>
           <div className="flex flex-col gap-y-2">
-            <span>Diner</span>
+            <span>{t("mealType.diner")}</span>
             {dispayDndItem(diner)}
           </div>
         </CardBody>

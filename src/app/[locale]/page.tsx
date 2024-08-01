@@ -1,8 +1,9 @@
 import { auth } from "@/auth";
 import { NavBar } from "@/components/navbar";
+import { HeroSection } from "@/components/sections/hero-section";
 import { redirect } from "next/navigation";
 
-export default async function HomePage() {
+const HomePage = async () => {
   const session = await auth();
 
   if (session?.sub) {
@@ -15,15 +16,10 @@ export default async function HomePage() {
         <NavBar />
       </header>
       <main className="container mx-auto mt-24">
-        <div className="max-w-lg space-y-10">
-          <h1 className="text-4xl font-semibold leading-none">
-            Meal planning made easy
-          </h1>
-          <p className="text-lg font-medium">
-            Simplify your weekly meals with just a few taps
-          </p>
-        </div>
+        <HeroSection />
       </main>
     </>
   );
-}
+};
+
+export default HomePage;

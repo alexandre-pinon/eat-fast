@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { Spacer } from "@nextui-org/react";
 import { cloneElement } from "react";
 import {
@@ -10,20 +11,20 @@ import { NavLink, type NavLinkProps } from "./nav-link";
 
 const links = [
   {
-    id: "meals-of-the-week",
-    text: "Meals of the week",
+    id: randomUUID(),
+    label: "mealsOfTheWeek",
     icon: <TbCalendarSmile />,
     href: "/meals-of-the-week",
   },
   {
-    id: "shopping-list",
-    text: "Shopping list",
+    id: randomUUID(),
+    label: "shoppingList",
     icon: <TbShoppingBagCheck />,
     href: "/shopping-list",
   },
   {
-    id: "settings",
-    text: "Settings",
+    id: randomUUID(),
+    label: "settings",
     icon: <TbSettings />,
     href: "/settings",
   },
@@ -41,7 +42,7 @@ export const SideNav = () => {
             <NavLink
               key={link.id}
               icon={icon}
-              text={link.text}
+              label={link.label}
               href={link.href}
             />
           );

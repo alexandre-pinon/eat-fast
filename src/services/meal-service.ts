@@ -7,6 +7,7 @@ import type { UserPreferences } from "@/entities/user";
 
 type MealSearchParams = {
   archived?: boolean;
+  isLeftover?: boolean;
   preferences?: UserPreferences;
 };
 export const getMeals = async (params?: MealSearchParams): Promise<Meal[]> => {
@@ -15,6 +16,9 @@ export const getMeals = async (params?: MealSearchParams): Promise<Meal[]> => {
     const search = new URLSearchParams({
       ...(params?.archived !== undefined
         ? { archived: params.archived.toString() }
+        : {}),
+      ...(params?.isLeftover !== undefined
+        ? { isLeftover: params.isLeftover.toString() }
         : {}),
       ...(params?.preferences
         ? {

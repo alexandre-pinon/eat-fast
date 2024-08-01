@@ -49,11 +49,16 @@ const parseRequestSearchParams = (
   searchParams: URLSearchParams,
 ): {
   archived: Option<boolean>;
+  isLeftover: Option<boolean>;
   displayBreakfast: Option<boolean>;
 } => {
   return pipe(
     identity.Do,
     identity.apS("archived", option.fromNullable(searchParams.get("archived"))),
+    identity.apS(
+      "isLeftover",
+      option.fromNullable(searchParams.get("isLeftover")),
+    ),
     identity.apS(
       "displayBreakfast",
       option.fromNullable(searchParams.get("displayBreakfast")),
@@ -65,10 +70,16 @@ const parseRequestSearchParams = (
 const getArchivedMealsByUserId = (input: {
   userId: string;
   archived: Option<boolean>;
+  isLeftover: Option<boolean>;
   displayBreakfast: Option<boolean>;
 }): TaskEither<TechnicalError | ValidationError, readonly Meal[]> => {
   const archivedCondition = flow(
     option.map((archived: boolean) => eq(meals.archived, archived)),
+    option.toUndefined,
+  );
+
+  const leftoverCondition = flow(
+    option.map((isLeftover: boolean) => eq(meals.isLeftover, isLeftover)),
     option.toUndefined,
   );
 
@@ -92,6 +103,7 @@ const getArchivedMealsByUserId = (input: {
             and(
               eq(meals.userId, input.userId),
               archivedCondition(input.archived),
+              leftoverCondition(input.isLeftover),
               displayBreakfastCondition(input.displayBreakfast),
             ),
           ),

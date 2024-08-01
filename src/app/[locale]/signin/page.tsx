@@ -9,7 +9,7 @@ import {
 } from "@nextui-org/react";
 import { getProviders } from "next-auth/react";
 
-export default async function SignInPage() {
+const SignInPage = async () => {
   const providers = await getProviders();
 
   return (
@@ -21,7 +21,7 @@ export default async function SignInPage() {
         <Spacer y={12} />
         <CardBody>
           {providers ? (
-            Object.values(providers).map((provider) => (
+            Object.values(providers).map(provider => (
               <ProviderSignIn key={provider.id} provider={provider} />
             ))
           ) : (
@@ -31,4 +31,6 @@ export default async function SignInPage() {
       </Card>
     </main>
   );
-}
+};
+
+export default SignInPage;

@@ -1,0 +1,77 @@
+{
+  "leftover": "leftover",
+  "new": "new",
+  "signInWith": "Sign in with",
+  "signOut": "Sign out",
+  "mealName": "Meal name",
+  "HeroSection": {
+    "heading": "Meal planning made easy",
+    "subHeading": "Simplify your weekly meals with just a few taps"
+  },
+  "MealsOfTheWeekPage": {
+    "heading": "Meals of the week"
+  },
+  "ShoppingListPage": {
+    "heading": "Shopping list"
+  },
+  "SettingsPage": {
+    "heading": "Settings",
+    "displayBreakfast": "Display breakfast",
+    "deleteAccount": "Delete account"
+  },
+  "DayOfTheWeekCard": {
+    "mealType": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "diner": "Diner"
+    },
+    "weekDay": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    }
+  },
+  "Navigation": {
+    "mealsOfTheWeek": "Meals of the week",
+    "shoppingList": "Shopping list",
+    "settings": "Settings"
+  },
+  "MealModal": {
+    "ingredient": "Ingredient",
+    "quantity": "Quantité",
+    "unit": "Unité",
+    "serving": "serving",
+    "totalTime": "Total time",
+    "quantityUnit": {
+      "g": "g",
+      "kg": "kg",
+      "ml": "ml",
+      "cl": "cl",
+      "l": "l",
+      "tsp": "teaspoon",
+      "tbsp": "tablespoon"
+    },
+    "noUnits": "no units",
+    "noIngredientsAdded": "No ingredients added",
+    "addIngredient": "Add ingredient",
+    "addMeal": "Add meal"
+  },
+  "MenuModal": {
+    "addFromHistory": "Add from history",
+    "addLeftovers": "Add leftovers",
+    "newMeal": "New meal"
+  },
+  "HistoryModal": {
+    "mealHistory": "Historique des repas",
+    "meal": "Repas",
+    "searchMeal": "Rechercher un repas"
+  },
+  "ToolTips": {
+    "archiveMeal": "Archive meal",
+    "cantEditLeftover": "You can't edit leftovers"
+  }
+}

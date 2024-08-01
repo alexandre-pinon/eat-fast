@@ -1,0 +1,77 @@
+{
+  "leftover": "reste",
+  "new": "nouveau",
+  "signInWith": "Se connecter avec",
+  "signOut": "Se déconnecter",
+  "mealName": "Nom du repas",
+  "HeroSection": {
+    "heading": "Planifiez vos repas simplement",
+    "subHeading": "Prévoyez vos repas de la semaine en seulement quelques clics"
+  },
+  "MealsOfTheWeekPage": {
+    "heading": "Repas de la semaine"
+  },
+  "ShoppingListPage": {
+    "heading": "Liste de course"
+  },
+  "SettingsPage": {
+    "heading": "Paramètres",
+    "displayBreakfast": "Afficher les petit déjeuners",
+    "deleteAccount": "Supprimer son compte"
+  },
+  "DayOfTheWeekCard": {
+    "mealType": {
+      "breakfast": "Petit déjeuner",
+      "lunch": "Déjeuner",
+      "diner": "Diner"
+    },
+    "weekDay": {
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    }
+  },
+  "Navigation": {
+    "mealsOfTheWeek": "Repas de la semaine",
+    "shoppingList": "Liste de course",
+    "settings": "Paramètres"
+  },
+  "MealModal": {
+    "ingredient": "Ingrédient",
+    "quantity": "Quantité",
+    "unit": "Unité",
+    "serving": "portion",
+    "totalTime": "Temps total",
+    "quantityUnit": {
+      "g": "g",
+      "kg": "kg",
+      "ml": "ml",
+      "cl": "cl",
+      "l": "l",
+      "tsp": "cuil. à café",
+      "tbsp": "cuil. à soupe"
+    },
+    "noUnits": "pas d'unités",
+    "noIngredientsAdded": "Pas d'ingrédients ajoutés",
+    "addIngredient": "Ajouter un ingrédient",
+    "addMeal": "Ajouter un repas"
+  },
+  "MenuModal": {
+    "addFromHistory": "Ajouter un repas passé",
+    "addLeftovers": "Ajouter des restes",
+    "newMeal": "Nouveau repas"
+  },
+  "HistoryModal": {
+    "mealHistory": "Historique des repas",
+    "meal": "Repas",
+    "searchMeal": "Rechercher un repas"
+  },
+  "ToolTips": {
+    "archiveMeal": "Archiver le repas",
+    "cantEditLeftover": "Tu ne peux pas éditer des restes"
+  }
+}

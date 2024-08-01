@@ -1,15 +1,18 @@
 "use client";
+
 import { Link } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 
 export type NavLinkProps = {
+  label: "mealsOfTheWeek" | "shoppingList" | "settings";
   icon: JSX.Element;
-  text: string;
   href: string;
 };
 
-export const NavLink = ({ icon, text, href }: NavLinkProps) => {
+export const NavLink = ({ label, icon, href }: NavLinkProps) => {
   const pathName = usePathname();
+  const t = useTranslations("Navigation");
 
   return (
     <Link
@@ -18,7 +21,7 @@ export const NavLink = ({ icon, text, href }: NavLinkProps) => {
       href={href}
     >
       {icon}
-      <span>{text}</span>
+      <span>{t(label)}</span>
     </Link>
   );
 };

@@ -30,6 +30,7 @@ import type { NonEmptyArray } from "fp-ts/NonEmptyArray";
 import type { Semigroup } from "fp-ts/Semigroup";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
+import { useTranslations } from "next-intl";
 import { redirect } from "next/navigation";
 
 const getAllMealIngredientsWithAggregatedQuantity = (
@@ -164,13 +165,13 @@ const getWeekMealIngredients = (): Promise<WeekMealIngredient> => {
   );
 };
 
-export default async function ShoppingListPage() {
+const ShoppingListPage = async () => {
   try {
     const weekMealIngredients = await getWeekMealIngredients();
 
     return (
       <div>
-        <h1 className="text-4xl font-semibold leading-none">Shopping list</h1>
+        <Heading />
         <Spacer y={16} />
         <div className="space-y-2">
           {Object.entries(weekMealIngredients).map(([day, mealIngredients]) => (
@@ -186,19 +187,29 @@ export default async function ShoppingListPage() {
   } catch {
     redirect("/signin");
   }
-}
+};
+
+const Heading = () => {
+  const t = useTranslations("ShoppingListPage");
+
+  return (
+    <h1 className="text-4xl font-semibold leading-none">{t("heading")}</h1>
+  );
+};
 
 const ShoppingCard = ({
   mealIngredients,
   day,
 }: { mealIngredients: MealIngredient[]; day: WeekDay }) => {
+  const t = useTranslations("DayOfTheWeekCard");
+
   return (
     <Card
       shadow="none"
       className="relative bg-primary-100 odd:bg-opacity-50 py-3"
     >
       <span className="absolute top-2 right-4 italic text-lg font-medium capitalize">
-        {day}
+        {t(`weekDay.${day}`)}
       </span>
       <CardBody>
         <div className="flex flex-col gap-y-3">
@@ -216,3 +227,5 @@ const ShoppingCard = ({
     </Card>
   );
 };
+
+export default ShoppingListPage;

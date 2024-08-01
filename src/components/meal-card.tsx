@@ -11,6 +11,7 @@ import {
   Image,
   Tooltip,
 } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 import { TbCheck } from "react-icons/tb";
 
@@ -30,6 +31,8 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
     });
   };
 
+  const t = useTranslations();
+
   return (
     <Card
       className={`bg-primary text-primary-foreground text-start ${isDragOverlay ? "scale-105" : ""}`}
@@ -47,7 +50,7 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
             variant="solid"
             size="sm"
           >
-            leftover
+            {t("leftover")}
           </Chip>
         ) : (
           <></>
@@ -60,7 +63,7 @@ export const MealCard = ({ meal, isDragOverlay }: MealCardProps) => {
           <Tooltip
             placement="bottom"
             color="default"
-            content="Archive meal"
+            content={t("ToolTips.archiveMeal")}
             delay={300}
           >
             <Button

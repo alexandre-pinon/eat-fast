@@ -20,6 +20,7 @@ import { and, eq } from "drizzle-orm";
 import { array, option, readonlyArray, record, taskEither } from "fp-ts";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
+import { useTranslations } from "next-intl";
 import { redirect } from "next/navigation";
 
 const getMealsByUserId = (
@@ -105,15 +106,13 @@ const getUserData = (): Promise<{
   );
 };
 
-export default async function MealsOfTheWeekPage() {
+const MealsOfTheWeekPage = async () => {
   try {
     const { data, preferences } = await getUserData();
 
     return (
       <div>
-        <h1 className="text-4xl font-semibold leading-none">
-          Meals of the week
-        </h1>
+        <Heading />
         <Spacer y={16} />
         <ScrollShadow
           hideScrollBar
@@ -126,4 +125,14 @@ export default async function MealsOfTheWeekPage() {
   } catch {
     redirect("/signin");
   }
-}
+};
+
+const Heading = () => {
+  const t = useTranslations("MealsOfTheWeekPage");
+
+  return (
+    <h1 className="text-4xl font-semibold leading-none">{t("heading")}</h1>
+  );
+};
+
+export default MealsOfTheWeekPage;

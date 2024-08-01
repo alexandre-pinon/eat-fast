@@ -3,6 +3,7 @@
 import { toggleMealIngredientCheckAction } from "@/actions/toggle-meal-ingredient-check.action";
 import type { MealIngredient } from "@/entities/ingredient";
 import { Checkbox } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 
 export const IngredientItem = ({
   mealIngredient,
@@ -27,6 +28,8 @@ export const IngredientItem = ({
     );
   };
 
+  const t = useTranslations("MealModal");
+
   return (
     <Checkbox
       color="primary"
@@ -39,7 +42,7 @@ export const IngredientItem = ({
         <span>
           {quantity}
           {["tsp", "tbsp"].includes(unit) ? " " : ""}
-          {["tsp", "tbsp"].includes(unit) ? `${unit}. ` : `${unit} `}
+          {unit !== "" ? t(`quantityUnit.${unit}`) : ""}{" "}
         </span>
         <span>
           {mealIngredient.name}

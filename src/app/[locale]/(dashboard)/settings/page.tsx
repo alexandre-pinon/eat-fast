@@ -3,11 +3,12 @@ import { ToggleBreakfastSwitch } from "@/components/inputs/toggle-breakfast-swit
 import { SignOutButton } from "@/components/sign-out";
 import { getPreferencesByUserId } from "@/repositories/user-repository";
 import { toPromise } from "@/utils";
-import { Button, Spacer } from "@nextui-org/react";
+import { Button, Input, Spacer } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { redirect } from "next/navigation";
 import { TbTrash } from "react-icons/tb";
 
-export default async function SettingsPage() {
+const SettingsPage = async () => {
   const session = await auth();
 
   if (!session?.sub || !session.user?.email) {
@@ -19,24 +20,47 @@ export default async function SettingsPage() {
   return (
     <div className="flex flex-col justify-between h-full">
       <div>
-        <h1 className="text-4xl font-semibold leading-none">Settings</h1>
+        <Heading />
         <Spacer y={16} />
-        <p className="text-lg font-medium">{session.user.email}</p>
+        <Input
+          className="max-w-xs"
+          size="lg"
+          isReadOnly
+          value={session.user.email}
+        />
         <Spacer y={12} />
         <ToggleBreakfastSwitch userId={session.sub} preferences={preferences} />
       </div>
       <div className="grid justify-items-start gap-y-6">
         <SignOutButton />
-        <Button
-          className="uppercase"
-          color="danger"
-          variant="light"
-          startContent={<TbTrash size={24} />}
-          isDisabled
-        >
-          Delete account
-        </Button>
+        <DeleteAccountButton />
       </div>
     </div>
   );
-}
+};
+
+const Heading = () => {
+  const t = useTranslations("SettingsPage");
+
+  return (
+    <h1 className="text-4xl font-semibold leading-none">{t("heading")}</h1>
+  );
+};
+
+const DeleteAccountButton = () => {
+  const t = useTranslations("SettingsPage");
+
+  return (
+    <Button
+      className="uppercase"
+      color="danger"
+      variant="light"
+      startContent={<TbTrash size={24} />}
+      isDisabled
+    >
+      {t("deleteAccount")}
+    </Button>
+  );
+};
+
+export default SettingsPage;

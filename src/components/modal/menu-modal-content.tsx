@@ -1,5 +1,6 @@
 import { useModalStore } from "@/hooks/modal-store";
 import { Button, ModalBody } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { TbBrandApple, TbCirclePlus, TbHistory } from "react-icons/tb";
 
 export const MenuModalContent = () => {
@@ -30,6 +31,8 @@ export const MenuModalContent = () => {
     setModalState("history");
   };
 
+  const t = useTranslations("MenuModal");
+
   return (
     <ModalBody className="grid grid-cols-3 px-[10px]">
       <Button
@@ -40,7 +43,7 @@ export const MenuModalContent = () => {
         disableRipple
         onPress={onPressMealHistory}
       >
-        Add from history
+        {t("addFromHistory")}
       </Button>
       <Button
         color="default"
@@ -50,7 +53,7 @@ export const MenuModalContent = () => {
         disableRipple
         onPress={onPressLeftoverMeal}
       >
-        Add leftovers
+        {t("addLeftovers")}
       </Button>
       <Button
         color="primary"
@@ -60,7 +63,7 @@ export const MenuModalContent = () => {
         disableRipple
         onPress={onPressNewMeal}
       >
-        New meal
+        {t("newMeal")}
       </Button>
     </ModalBody>
   );

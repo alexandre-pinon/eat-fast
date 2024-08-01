@@ -1,6 +1,7 @@
 import { updateServingsAction } from "@/actions/update-meal-servings.action";
 import { type MealModalMode, isAdd } from "@/types/meal-modal-state";
 import { Button, ButtonGroup } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { TbMinus, TbPlus } from "react-icons/tb";
 
 type ServingsInputProps = {
@@ -33,6 +34,8 @@ export const ServingsInput = ({
     setServings(servings - 1);
   };
 
+  const t = useTranslations("MealModal");
+
   return (
     <ButtonGroup>
       <Button
@@ -44,7 +47,8 @@ export const ServingsInput = ({
         <TbMinus />
       </Button>
       <div className="bg-primary text-primary-foreground text-small h-10 inline-flex items-center px-4">
-        {servings} servings
+        {servings} {t("serving")}
+        {servings !== 1 ? "s" : ""}
       </div>
       <Button isIconOnly color="primary" onPress={incrementServings}>
         <TbPlus />

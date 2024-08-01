@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { type Key, useEffect, useMemo, useState, useTransition } from "react";
 import { TbArrowBack, TbSearch, TbTrash } from "react-icons/tb";
 
@@ -78,6 +79,8 @@ export const HistoryModalContent = () => {
     fetchArchivedMeals();
   }, []);
 
+  const t = useTranslations("HistoryModal");
+
   return (
     <ModalBody className="p-2">
       {isBackLinkVisible ? (
@@ -88,13 +91,13 @@ export const HistoryModalContent = () => {
         <></>
       )}
       <div className="flex justify-between py-2 pl-2">
-        <span className="text-xl font-semibold">Meal history</span>
+        <span className="text-xl font-semibold">{t("mealHistory")}</span>
         <Input
           className="max-w-xs"
           color="primary"
           variant="faded"
           isClearable
-          placeholder="Search meal..."
+          placeholder={`${t("searchMeal")} ...`}
           startContent={<TbSearch />}
           value={filterValue}
           onClear={() => setFilterValue("")}
@@ -109,7 +112,7 @@ export const HistoryModalContent = () => {
           onRowAction={onRowAction}
         >
           <TableHeader>
-            <TableColumn>Meal</TableColumn>
+            <TableColumn>{t("meal")}</TableColumn>
             <TableColumn> </TableColumn>
           </TableHeader>
           <TableBody>

@@ -11,6 +11,7 @@ import {
   ModalBody,
   Spinner,
 } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { TbArrowBack } from "react-icons/tb";
 
@@ -46,9 +47,13 @@ export const LeftoverModalContent = () => {
 
   useEffect(() => {
     startFetch(() =>
-      getMeals({ archived: false, preferences }).then(setLeftoverMeals),
+      getMeals({ archived: false, isLeftover: false, preferences }).then(
+        setLeftoverMeals,
+      ),
     );
   }, [preferences]);
+
+  const t = useTranslations();
 
   return (
     <ModalBody className="p-4">
@@ -59,9 +64,11 @@ export const LeftoverModalContent = () => {
       ) : (
         <></>
       )}
-      <span className="text-xl font-semibold">Add leftovers</span>
+      <span className="text-xl font-semibold">
+        {t("MenuModal.addLeftovers")}
+      </span>
       {fetchPending ? (
-        <Spinner label="Loading..." className="py-8" />
+        <Spinner className="py-8" />
       ) : (
         <div className="grid grid-cols-4 gap-2">
           {leftoverMeals.map(meal => (

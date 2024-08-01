@@ -9,6 +9,7 @@ import {
 } from "@/types/meal-modal-state";
 import { isHistory, isLeftover } from "@/types/modal-state";
 import { Button, Tooltip } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import {
@@ -63,6 +64,8 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
     });
   };
 
+  const t = useTranslations("MealModal");
+
   return (
     <form
       action={formAction}
@@ -70,7 +73,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
     >
       <div>
         <MealNameInput mode={mode} activeMeal={activeMeal} />
-        <p className="text-lg font-medium mt-6 mb-4">Ingredients</p>
+        <p className="text-lg font-medium mt-6 mb-4">{t("ingredient")}s</p>
         <MealIngredientsInput
           mode={mode}
           activeMeal={activeMeal}
@@ -133,12 +136,14 @@ const EditButtons = ({
 }) => {
   const { pending } = useFormStatus();
 
+  const t = useTranslations("ToolTips");
+
   return match(mode)
     .with("normal", () => (
       <Tooltip
         placement="top"
         color="default"
-        content="You can't edit leftovers"
+        content={t("cantEditLeftover")}
         delay={300}
         isDisabled={!isLeftover}
       >
@@ -184,6 +189,8 @@ const EditButtons = ({
 const AddButton = () => {
   const { pending } = useFormStatus();
 
+  const t = useTranslations("MealModal");
+
   return (
     <Button
       type="submit"
@@ -192,7 +199,7 @@ const AddButton = () => {
       radius="lg"
       isLoading={pending}
     >
-      Add meal
+      {t("addMeal")}
     </Button>
   );
 };

@@ -1,4 +1,5 @@
 "use client";
+
 import type { NonEmptyMeal, WeekMeal, WeekMealData } from "@/entities/meal";
 import type { UserPreferences } from "@/entities/user";
 import { useModalStore } from "@/hooks/modal-store";

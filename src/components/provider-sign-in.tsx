@@ -1,6 +1,8 @@
 "use client";
+
 import { Button } from "@nextui-org/react";
 import { type ClientSafeProvider, signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { match } from "ts-pattern";
@@ -13,6 +15,8 @@ export const ProviderSignIn = ({
       .with("google", () => <FcGoogle size={16} />)
       .otherwise(() => undefined);
 
+  const t = useTranslations();
+
   return (
     <Button
       className="w-full"
@@ -22,7 +26,7 @@ export const ProviderSignIn = ({
       startContent={providerIconMap(provider.id)}
       onPress={() => signIn(provider.id, { callbackUrl: "/meals-of-the-week" })}
     >
-      Sign in with {provider.name}
+      {t("signInWith")} {provider.name}
     </Button>
   );
 };
