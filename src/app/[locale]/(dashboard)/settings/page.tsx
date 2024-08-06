@@ -2,15 +2,18 @@ import { auth } from "@/auth";
 import { ToggleBreakfastSwitch } from "@/components/inputs/toggle-breakfast-switch";
 import { SignOutButton } from "@/components/sign-out";
 import { getPreferencesByUserId } from "@/repositories/user-repository";
+import type { LocaleParams } from "@/types";
 import { toPromise } from "@/utils";
 import { Button, Input, Spacer } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { TbTrash } from "react-icons/tb";
 
-const SettingsPage = async () => {
-  const session = await auth();
+const SettingsPage = async ({ params }: LocaleParams) => {
+  unstable_setRequestLocale(params.locale);
 
+  const session = await auth();
   if (!session?.sub || !session.user?.email) {
     redirect("/signin");
   }

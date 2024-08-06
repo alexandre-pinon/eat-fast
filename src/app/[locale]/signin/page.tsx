@@ -1,5 +1,6 @@
 import { Logo } from "@/components/logo";
 import { ProviderSignIn } from "@/components/provider-sign-in";
+import type { LocaleParams } from "@/types";
 import {
   Card,
   CardBody,
@@ -8,8 +9,11 @@ import {
   Spacer,
 } from "@nextui-org/react";
 import { getProviders } from "next-auth/react";
+import { unstable_setRequestLocale } from "next-intl/server";
 
-const SignInPage = async () => {
+const SignInPage = async ({ params }: LocaleParams) => {
+  unstable_setRequestLocale(params.locale);
+
   const providers = await getProviders();
 
   return (

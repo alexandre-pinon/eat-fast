@@ -11,6 +11,7 @@ import type { WeekMealIngredient } from "@/entities/meal";
 import type { TechnicalError } from "@/errors/technial.error";
 import type { ValidationError } from "@/errors/validation.error";
 import { getPreferencesByUserId } from "@/repositories/user-repository";
+import type { LocaleParams } from "@/types";
 import type { QuantityUnit } from "@/types/quantity-unit";
 import { type WeekDay, weekDays } from "@/types/weekday";
 import { toPromise, tryCatchTechnical } from "@/utils";
@@ -31,6 +32,7 @@ import type { Semigroup } from "fp-ts/Semigroup";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
 import { useTranslations } from "next-intl";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 const getAllMealIngredientsWithAggregatedQuantity = (
@@ -165,7 +167,9 @@ const getWeekMealIngredients = (): Promise<WeekMealIngredient> => {
   );
 };
 
-const ShoppingListPage = async () => {
+const ShoppingListPage = async ({ params }: LocaleParams) => {
+  unstable_setRequestLocale(params.locale);
+
   try {
     const weekMealIngredients = await getWeekMealIngredients();
 

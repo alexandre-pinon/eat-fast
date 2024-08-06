@@ -19,3 +19,5 @@ export type ApiErrorResponse = {
   issues?: string[];
 };
 export type ApiResponse<T = unknown> = NextResponse<T | ApiErrorResponse>;
+
+export type LocaleParams = { params: { locale: string } };

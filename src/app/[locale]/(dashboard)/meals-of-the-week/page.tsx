@@ -13,6 +13,7 @@ import type { UserPreferences } from "@/entities/user";
 import type { TechnicalError } from "@/errors/technial.error";
 import { logError } from "@/logger";
 import { getPreferencesByUserId } from "@/repositories/user-repository";
+import type { LocaleParams } from "@/types";
 import type { WeekDay } from "@/types/weekday";
 import { toPromise, tryCatchTechnical } from "@/utils";
 import { ScrollShadow, Spacer } from "@nextui-org/react";
@@ -21,6 +22,7 @@ import { array, option, readonlyArray, record, taskEither } from "fp-ts";
 import type { TaskEither } from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
 import { useTranslations } from "next-intl";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 const getMealsByUserId = (
@@ -106,7 +108,9 @@ const getUserData = (): Promise<{
   );
 };
 
-const MealsOfTheWeekPage = async () => {
+const MealsOfTheWeekPage = async ({ params }: LocaleParams) => {
+  unstable_setRequestLocale(params.locale);
+
   try {
     const { data, preferences } = await getUserData();
 

@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 import "../globals.css";
 import { LOCALES } from "@/i18n";
+import type { LocaleParams } from "@/types";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ClientProviders } from "../client-providers";
@@ -25,7 +26,7 @@ export const generateStaticParams = () => {
 const RootLayout = async ({
   children,
   params,
-}: Readonly<{ children: ReactNode; params: { locale: string } }>) => {
+}: Readonly<LocaleParams & { children: ReactNode }>) => {
   const messages = await getMessages();
 
   return (
