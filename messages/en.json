@@ -7,8 +7,25 @@
   "mealName": "Meal name",
   "HeroSection": {
     "heading": "Meal planning made easy",
-    "subHeading": "Eat healthier, save time, and enjoy delicious meals every day.",
+    "subHeading": "Eat healthier, save time, and enjoy delicious meals every day",
     "cta": "Start now"
+  },
+  "FeaturesSections": {
+    "heading": "Simplify your meal planning, cooking, and grocery shopping",
+    "subHeading": "Take the stress out of meal planning. With Eat-fast, you can easily plan your meals and save your recipes, we will generate the grocery list for you!",
+    "feature1": {
+      "heading": "Plan your meals ahead",
+      "subHeading": "Discover the peace of mind that comes from having your meals planned out in advance — say goodbye to last-minute dinner decisions"
+    },
+    "feature2": {
+      "heading": "Save your favorite recipes",
+      "subHeading": "No more lost recipe cards or forgotten web links; our app securely stores and organizes your recipes for quick retrieval anytime"
+    },
+    "feature3": {
+      "heading": "Auto-generate your grocery list",
+      "subHeading": "Automatically turn your meal plans into a smart grocery list, ensuring you buy only what you need when you need it and never forget an ingredient again"
+    },
+    "simplify": "Simplify"
   },
   "MealsOfTheWeekPage": {
     "heading": "Meals of the week"

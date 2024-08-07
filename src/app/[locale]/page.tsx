@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
 import { NavBar } from "@/components/navbar";
+import { FeaturesSection } from "@/components/sections/features-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import type { LocaleParams } from "@/types";
+import { Spacer } from "@nextui-org/react";
 import { unstable_setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 
@@ -18,8 +20,12 @@ const HomePage = async ({ params }: LocaleParams) => {
       <header>
         <NavBar />
       </header>
-      <main className="container mx-auto mt-24">
+      <main className="container mx-auto">
+        <Spacer y={24} />
         <HeroSection />
+        <Spacer y={24} />
+        <FeaturesSection />
+        <Spacer y={24} />
       </main>
     </>
   );

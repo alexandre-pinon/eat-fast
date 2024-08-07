@@ -10,6 +10,23 @@
     "subHeading": "Mangez plus sainement, gagnez du temps et savourez de délicieux repas tous les jours.",
     "cta": "Commencer maintenant"
   },
+  "FeaturesSections": {
+    "heading": "Simplifiez la planification de vos repas, la cuisine et vos courses",
+    "subHeading": "Éliminez le stress de la planification des repas. Avec Eat-fast, vous pouvez facilement planifier vos repas et enregistrer vos recettes, nous générerons la liste de courses pour vous !",
+    "feature1": {
+      "heading": "Planifiez vos repas à l'avance",
+      "subHeading": "Découvrez la sérénité d'avoir vos repas planifiés en avance — adieu les décisions de dernière minute pour le dîner"
+    },
+    "feature2": {
+      "heading": "Sauvegardez vos recettes préférées",
+      "subHeading": "Plus de cartes de recettes perdues ou de liens web oubliés. Eat-fast sécurise et organise vos recettes pour une récupération rapide à tout moment"
+    },
+    "feature3": {
+      "heading": "Générez automatiquement votre liste de courses",
+      "subHeading": "Transformez instantanément vos repas en une liste de courses intelligente. N'achetez que ce dont vous avez besoin quand vous en avez besoin : n'oubliez jamais un ingrédient"
+    },
+    "simplify": "Simplifier"
+  },
   "MealsOfTheWeekPage": {
     "heading": "Repas de la semaine"
   },

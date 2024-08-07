@@ -1,5 +1,4 @@
 import {
-  Link,
   Navbar,
   NavbarBrand,
   NavbarContent,
@@ -18,7 +17,7 @@ export const NavBar = () => {
         <Logo size={40} />
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
+        {/*<NavbarItem>
           <Link className="text-foreground" href="#">
             Pricing
           </Link>
@@ -27,7 +26,7 @@ export const NavBar = () => {
           <Link className="text-foreground" href="#">
             FAQ
           </Link>
-        </NavbarItem>
+        </NavbarItem>*/}
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
