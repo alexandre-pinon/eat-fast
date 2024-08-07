@@ -1,12 +1,14 @@
 {
   "leftover": "leftover",
   "new": "new",
+  "signIn": "Sign in",
   "signInWith": "Sign in with",
   "signOut": "Sign out",
   "mealName": "Meal name",
   "HeroSection": {
     "heading": "Meal planning made easy",
-    "subHeading": "Simplify your weekly meals with just a few taps"
+    "subHeading": "Eat healthier, save time, and enjoy delicious meals every day.",
+    "cta": "Start now"
   },
   "MealsOfTheWeekPage": {
     "heading": "Meals of the week"

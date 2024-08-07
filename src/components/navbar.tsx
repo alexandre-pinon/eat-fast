@@ -5,10 +5,13 @@ import {
   NavbarContent,
   NavbarItem,
 } from "@nextui-org/react";
+import { useTranslations } from "next-intl";
 import { Logo } from "./logo";
-import { SignIn } from "./sign-in";
+import { SignInButton } from "./sign-in-button";
 
 export const NavBar = () => {
+  const t = useTranslations();
+
   return (
     <Navbar>
       <NavbarBrand className="">
@@ -28,7 +31,7 @@ export const NavBar = () => {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <SignIn color="primary" variant="flat" />
+          <SignInButton text={t("signIn")} color="primary" variant="flat" />
         </NavbarItem>
       </NavbarContent>
     </Navbar>

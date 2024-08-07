@@ -1,12 +1,14 @@
 {
   "leftover": "reste",
   "new": "nouveau",
+  "signIn": "Se connecter",
   "signInWith": "Se connecter avec",
   "signOut": "Se déconnecter",
   "mealName": "Nom du repas",
   "HeroSection": {
     "heading": "Planifiez vos repas simplement",
-    "subHeading": "Prévoyez vos repas de la semaine en seulement quelques clics"
+    "subHeading": "Mangez plus sainement, gagnez du temps et savourez de délicieux repas tous les jours.",
+    "cta": "Commencer maintenant"
   },
   "MealsOfTheWeekPage": {
     "heading": "Repas de la semaine"
