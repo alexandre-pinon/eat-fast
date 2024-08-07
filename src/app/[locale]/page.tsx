@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { NavBar } from "@/components/navbar";
+import { CtaSection } from "@/components/sections/cta-section";
 import { FeaturesSection } from "@/components/sections/features-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import type { LocaleParams } from "@/types";
@@ -25,6 +26,8 @@ const HomePage = async ({ params }: LocaleParams) => {
         <HeroSection />
         <Spacer y={24} />
         <FeaturesSection />
+        <Spacer y={24} />
+        <CtaSection />
         <Spacer y={24} />
       </main>
     </>

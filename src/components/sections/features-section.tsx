@@ -10,7 +10,7 @@ export const FeaturesSection = () => {
     <FcServices key={randomUUID()} size={48} />,
   ];
 
-  const t = useTranslations("FeaturesSections");
+  const t = useTranslations("FeaturesSection");
 
   return (
     <>

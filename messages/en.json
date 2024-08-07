@@ -10,7 +10,7 @@
     "subHeading": "Eat healthier, save time, and enjoy delicious meals every day",
     "cta": "Start now"
   },
-  "FeaturesSections": {
+  "FeaturesSection": {
     "heading": "Simplify your meal planning, cooking, and grocery shopping",
     "subHeading": "Take the stress out of meal planning. With Eat-fast, you can easily plan your meals and save your recipes, we will generate the grocery list for you!",
     "feature1": {
@@ -27,6 +27,11 @@
     },
     "simplify": "Simplify"
   },
+  "CtaSection": {
+    "heading": "Ready to save precious hours every week?",
+    "subHeading": "Say goodbye to the daily <important>what's for dinner?</important> puzzle and hello to quick, healthy, and flavorful cooking with no efforts!",
+    "cta": "Start planning now"
+  },
   "MealsOfTheWeekPage": {
     "heading": "Meals of the week"
   },
@@ -42,7 +47,7 @@
     "mealType": {
       "breakfast": "Breakfast",
       "lunch": "Lunch",
-      "diner": "Diner"
+      "dinner": "Dinner"
     },
     "weekDay": {
       "monday": "Monday",

@@ -47,7 +47,7 @@ export const DayOfTheWeekCard = ({ day, meals }: DayOfTheWeekCardProps) => {
             {dispayDndItem(lunch)}
           </div>
           <div className="flex flex-col gap-y-2">
-            <span>{t("mealType.diner")}</span>
+            <span>{t("mealType.dinner")}</span>
             {dispayDndItem(diner)}
           </div>
         </CardBody>
