@@ -32,6 +32,18 @@
     "subHeading": "Dites adieu au casse-tête quotidien <important>Qu'est-ce qu'on mange ce soir ?</important> et bonjour à une cuisine rapide, saine et pleine de saveurs sans efforts !",
     "cta": "Planifiez dès aujourd'hui"
   },
+  "PricingSection": {
+    "tagline": "Un seul prix",
+    "heading": "Le dernier planificateur de repas dont vous aurez besoin",
+    "subHeading": "Débloquez un accès à vie à des repas sans stress et à des courses simplifiées — commencez votre <important>essai gratuit de 14 jours</important> sans risque dès maintenant",
+    "card": {
+      "plan": "Accès à vie illimité",
+      "feature1": "Planificateur des repas de la semaine",
+      "feature2": "Recettes illimitées",
+      "feature3": "Générateur de liste de courses",
+      "cta": "Activer mon essai gratuit"
+    }
+  },
   "MealsOfTheWeekPage": {
     "heading": "Repas de la semaine"
   },

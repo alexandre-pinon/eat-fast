@@ -32,6 +32,18 @@
     "subHeading": "Say goodbye to the daily <important>what's for dinner?</important> puzzle and hello to quick, healthy, and flavorful cooking with no efforts!",
     "cta": "Start planning now"
   },
+  "PricingSection": {
+    "tagline": "One price",
+    "heading": "The last meal planner you'll ever need",
+    "subHeading": "Unlock lifetime access to stress-free dining and simplified grocery shopping—start your <important>14-day risk-free trial</important> now",
+    "card": {
+      "plan": "Unlimited lifetime access",
+      "feature1": "Weekly meal planner",
+      "feature2": "Unlimited recipes",
+      "feature3": "Grocery list generator",
+      "cta": "Activate my free trial"
+    }
+  },
   "MealsOfTheWeekPage": {
     "heading": "Meals of the week"
   },

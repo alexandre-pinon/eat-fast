@@ -23,8 +23,8 @@ export const FeaturesSection = () => {
           <p>{t("subHeading")}</p>
         </div>
       </div>
-      <Spacer y={16} />
-      <div className="grid grid-cols-3 text-center gap-x-10">
+      <Spacer y={24} />
+      <div className="grid grid-cols-3 text-center gap-x-14">
         {icons.map((icon, i) => (
           <div key={icon.key} className="flex flex-col items-center gap-y-4">
             {icon}
