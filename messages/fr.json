@@ -44,6 +44,13 @@
       "cta": "Activer mon essai gratuit"
     }
   },
+  "Footer": {
+    "links": {
+      "support": "Support",
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs"
+    }
+  },
   "MealsOfTheWeekPage": {
     "heading": "Repas de la semaine"
   },

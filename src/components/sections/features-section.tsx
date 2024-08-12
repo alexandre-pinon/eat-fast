@@ -14,7 +14,7 @@ export const FeaturesSection = () => {
 
   return (
     <>
-      <div className="grid justify-items-center gap-y-10">
+      <div id="features" className="grid justify-items-center gap-y-10">
         <div>{t("simplify")}</div>
         <div className="max-w-2xl text-center space-y-6">
           <h2 className="text-2xl font-semibold leading-tight">

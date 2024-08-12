@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NavBar } from "@/components/navbar";
 import { CtaSection } from "@/components/sections/cta-section";
 import { FeaturesSection } from "@/components/sections/features-section";
+import { Footer } from "@/components/sections/footer";
 import { HeroSection } from "@/components/sections/hero-section";
 import { PricingSection } from "@/components/sections/pricing-section";
 import type { LocaleParams } from "@/types";
@@ -33,6 +34,7 @@ const HomePage = async ({ params }: LocaleParams) => {
         <CtaSection />
         <Spacer y={40} />
       </main>
+      <Footer />
     </>
   );
 };

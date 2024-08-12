@@ -33,7 +33,7 @@ export const PricingSection = () => {
   ];
 
   return (
-    <div className="grid justify-items-center gap-y-10">
+    <div id="pricing" className="grid justify-items-center gap-y-10">
       <div>{t("tagline")}</div>
       <div className="max-w-2xl text-center space-y-6">
         <h2 className="text-2xl font-semibold leading-tight">{t("heading")}</h2>
