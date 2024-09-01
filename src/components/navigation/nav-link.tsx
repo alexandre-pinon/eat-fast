@@ -1,5 +1,6 @@
 "use client";
 
+import { useNavStore } from "@/hooks/nav-store";
 import { Link } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -12,16 +13,21 @@ export type NavLinkProps = {
 
 export const NavLink = ({ label, icon, href }: NavLinkProps) => {
   const pathName = usePathname();
+  const { isMinimized } = useNavStore();
+
   const t = useTranslations("Navigation");
 
   return (
     <Link
       color={pathName === href ? "primary" : "foreground"}
-      className="items-center gap-x-2"
+      className={[
+        `${isMinimized ? "justify-center" : ""}`,
+        "items-center gap-x-2",
+      ].join(" ")}
       href={href}
     >
       {icon}
-      <span>{t(label)}</span>
+      {!isMinimized && <span>{t(label)}</span>}
     </Link>
   );
 };

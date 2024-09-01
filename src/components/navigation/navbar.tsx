@@ -5,8 +5,8 @@ import {
   NavbarItem,
 } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
-import { Logo } from "./logo";
-import { SignInButton } from "./sign-in-button";
+import { Logo } from "../logo";
+import { SignInButton } from "../sign-in-button";
 
 export const NavBar = () => {
   const t = useTranslations();

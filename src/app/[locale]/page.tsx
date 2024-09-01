@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { NavBar } from "@/components/navbar";
+import { NavBar } from "@/components/navigation/navbar";
 import { CtaSection } from "@/components/sections/cta-section";
 import { FeaturesSection } from "@/components/sections/features-section";
 import { Footer } from "@/components/sections/footer";
