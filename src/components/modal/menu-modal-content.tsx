@@ -34,7 +34,7 @@ export const MenuModalContent = () => {
   const t = useTranslations("MenuModal");
 
   return (
-    <ModalBody className="grid grid-cols-3 px-[10px]">
+    <ModalBody className="grid md:grid-cols-3 px-[10px]">
       <Button
         color="default"
         variant="flat"

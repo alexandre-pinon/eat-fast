@@ -87,7 +87,7 @@ export const MealIngredientsInput = ({
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-[1fr_1fr_2fr_min-content] gap-x-4 gap-y-2 justify-items-center">
+        <div className="grid grid-cols-[1fr_1fr_2fr_min-content] gap-x-2 md:gap-x-4 gap-y-2 justify-items-center">
           <span>{t("quantity")}</span>
           <span>{t("unit")}</span>
           <span>{t("ingredient")}</span>

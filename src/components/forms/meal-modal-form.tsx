@@ -69,7 +69,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
   return (
     <form
       action={formAction}
-      className="px-10 py-4 grid grid-cols-[1fr_max-content] gap-x-4"
+      className="px-4 md:px-10 py-4 grid md:grid-cols-[1fr_max-content] gap-x-4 gap-y-6 md:gap-y-0"
     >
       <div>
         <MealNameInput mode={mode} activeMeal={activeMeal} />
@@ -81,7 +81,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
           userId={userId}
         />
       </div>
-      <div className="flex flex-col items-end gap-y-3">
+      <div className="row-start-1 flex flex-col items-center md:items-end gap-y-3">
         <EditButtons
           mode={mode}
           setMode={setMode}
@@ -95,7 +95,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
         />
         <MealTimeInput mode={mode} activeMeal={activeMeal} />
       </div>
-      <div className="col-span-2">
+      <div className="md:col-span-2">
         <p className="text-lg font-medium mt-6 mb-4">Instructions</p>
         <MealInstructionsInput mode={mode} activeMeal={activeMeal} />
       </div>

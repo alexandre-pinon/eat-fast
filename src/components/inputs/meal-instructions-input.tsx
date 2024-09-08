@@ -24,8 +24,18 @@ export const MealInstructionsInput = ({
       {isNormal(mode) ? (
         mealRecipe.length > 0 ? (
           <ul className="list-disc list-inside space-y-4">
-            {mealRecipe.split("\n").map(instruction => (
-              <li key={instruction}>{instruction}</li>
+            {mealRecipe.split("\r\n\r\n").map(instructionBlock => (
+              <li key={instructionBlock}>
+                {instructionBlock.split("\r\n").map(instruction => (
+                  <span
+                    className="[&:not(:first-child)]:pl-[23px]"
+                    key={instruction}
+                  >
+                    {instruction}
+                    <br />
+                  </span>
+                ))}
+              </li>
             ))}
           </ul>
         ) : (

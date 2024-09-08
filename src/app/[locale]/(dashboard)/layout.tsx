@@ -30,7 +30,7 @@ const links = [
 
 const DashboardLayout = ({ children }: Readonly<{ children: ReactNode }>) => {
   return (
-    <div className="relative grid grid-cols-[max-content_1fr] gap-3 xl:m-3 min-h-[100vh] xl:min-h-[calc(100vh-1.5rem)]">
+    <div className="relative grid grid-cols-[max-content_1fr] gap-3 xl:m-3 min-h-screen xl:min-h-[calc(100vh-1.5rem)]">
       <SideNav links={links} />
       <main className="bg-white px-10 py-12 rounded-xl shadow-sm">
         {children}
