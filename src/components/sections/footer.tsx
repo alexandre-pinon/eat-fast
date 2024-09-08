@@ -1,4 +1,5 @@
-import { Divider, Link } from "@nextui-org/react";
+import { Link } from "@/i18n/routing";
+import { Divider } from "@nextui-org/react";
 import { useTranslations } from "next-intl";
 import { Logo } from "../logo";
 

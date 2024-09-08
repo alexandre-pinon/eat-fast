@@ -1,4 +1,4 @@
-import { Link } from "@nextui-org/react";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 
 export const Logo = ({ size }: { size: number | `${number}` }) => {

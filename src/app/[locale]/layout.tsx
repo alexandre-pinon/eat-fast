@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 import "../globals.css";
-import { LOCALES } from "@/i18n";
+import { routing } from "@/i18n/routing";
 import type { LocaleParams } from "@/types";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export const generateStaticParams = () => {
-  return LOCALES.map(locale => ({ locale }));
+  return routing.locales.map(locale => ({ locale }));
 };
 
 const RootLayout = async ({

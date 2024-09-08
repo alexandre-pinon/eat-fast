@@ -1,22 +1,19 @@
 import { boolean } from "fp-ts";
 import { pipe } from "fp-ts/function";
 import { type NextRequestWithAuth, withAuth } from "next-auth/middleware";
-import createIntlMiddleware from "next-intl/middleware";
+import createMiddleware from "next-intl/middleware";
 import type { NextFetchEvent } from "next/server";
-import { LOCALES } from "./i18n";
+import { routing } from "./i18n/routing";
 
 const PUBLIC_ROUTES = ["/", "/signin"];
 
-const intlMiddlware = createIntlMiddleware({
-  locales: LOCALES,
-  defaultLocale: LOCALES[0],
-});
+const intlMiddlware = createMiddleware(routing);
 
 const authMiddleware = withAuth(req => intlMiddlware(req));
 
 const middleware = (req: NextRequestWithAuth, event: NextFetchEvent) => {
   const publicPathnameRegex = RegExp(
-    `^(/(${LOCALES.join("|")}))?(${PUBLIC_ROUTES.flatMap(p =>
+    `^(/(${routing.locales.join("|")}))?(${PUBLIC_ROUTES.flatMap(p =>
       p === "/" ? ["", "/"] : p,
     ).join("|")})/?$`,
     "i",

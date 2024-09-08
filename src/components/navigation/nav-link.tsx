@@ -1,7 +1,7 @@
 "use client";
 
 import { useNavStore } from "@/hooks/nav-store";
-import { Link } from "@nextui-org/react";
+import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 
@@ -22,7 +22,7 @@ export const NavLink = ({ label, icon, href }: NavLinkProps) => {
       color={pathName === href ? "primary" : "foreground"}
       className={[
         `${isMinimized ? "justify-center" : ""}`,
-        "items-center gap-x-2",
+        "flex items-center gap-x-2",
       ].join(" ")}
       href={href}
     >
