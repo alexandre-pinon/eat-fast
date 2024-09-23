@@ -81,7 +81,7 @@ export const MealModalForm = ({ userId }: { userId: string }) => {
           userId={userId}
         />
       </div>
-      <div className="row-start-1 flex flex-col items-center md:items-end gap-y-3">
+      <div className="row-start-1 md:row-auto flex flex-col items-center md:items-end gap-y-3">
         <EditButtons
           mode={mode}
           setMode={setMode}
